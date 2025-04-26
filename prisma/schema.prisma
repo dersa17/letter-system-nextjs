@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RoleUser {
+  id   Int    @id @default(autoincrement())
+  nama String @db.VarChar(25)
+  users User[]
+}
+
+model Jurusan {
+  kode String @id @db.VarChar(2)
+  nama String @db.VarChar(18)
+  mataKuliah MataKuliah[]
+  users    User[]
+}
+
+model User {
+  nik        String   @id @db.VarChar(7)
+  nama       String   @db.VarChar(100)
+  email      String   @db.VarChar(45)
+  password   String   @db.VarChar(100)
+  alamat     String   @db.VarChar(45)
+  periode    String   @db.VarChar(20)
+  status     String?  @db.VarChar(20)
+  image      String?  @db.VarChar(30)
+  createdAt  DateTime @db.Timestamp() @default(now())
+  updatedAt  DateTime @db.Timestamp() @updatedAt
+  idRole     Int
+  idJurusan  String?  @db.VarChar(2)
+  
+  role       RoleUser @relation(fields: [idRole], references: [id])
+  jurusan    Jurusan? @relation(fields: [idJurusan], references: [kode])
+  pengajuanSurat PengajuanSurat[]
+
+  moPengajuan        PengajuanSurat[] @relation("MO")
+  kaprodiPengajuan   PengajuanSurat[] @relation("Kaprodi")
+}
+
+model MataKuliah {
+  kode    String   @id @db.VarChar(12)
+  nama    String   @db.VarChar(100)
+  SKS     Int
+  idJurusan String @db.VarChar(2)
+  
+  jurusan  Jurusan @relation(fields: [idJurusan], references: [kode])
+  suratTugasMk SuratTugasMk[]
+}
+
+model PengajuanSurat {
+  id               Int   @id @default(autoincrement()) 
+  nrp              String    @db.VarChar(7)
+  moNik            String?   @db.VarChar(7)
+  kaprodiNik       String?   @db.VarChar(7)
+  jenisSurat       String    @db.VarChar(33)
+  status           String    @db.VarChar(25)
+  tanggalPengajuan DateTime  @db.Timestamp() @default(now())
+  tanggalPersetujuan DateTime? @db.Timestamp()
+  fileSurat        String?   @db.VarChar(255)
+  tanggalUpload    DateTime? @db.Timestamp()
+  user             User      @relation(fields: [nrp], references: [nik])
+  mo               User?     @relation("MO", fields: [moNik], references: [nik])
+  kaprodi          User?     @relation("Kaprodi", fields: [kaprodiNik], references: [nik])
+
+  suratTugasMk SuratTugasMk?
+  suratMahasiswaAktif SuratMahasiswaAktif?
+  suratKeteranganLulus SuratKeteranganLulus?
+  laporanHasilStudi LaporanHasilStudi?
+}
+
+model SuratTugasMk {
+  id             Int       @id @default(autoincrement())
+  tujuanInstansi String    @db.VarChar(255)
+  periode        String?   @db.VarChar(20)
+  dataMahasiswa  String    @db.VarChar(255)
+  tujuan         String    @db.VarChar(255)
+  topik          String    @db.VarChar(255)
+  idPengajuan    Int   @unique 
+  kodeMk         String    @db.VarChar(12)
+  
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+  mataKuliah     MataKuliah     @relation(fields: [kodeMk], references: [kode])
+}
+
+model SuratMahasiswaAktif {
+  id             Int       @id @default(autoincrement())
+  namaLengkap    String    @db.VarChar(100)
+  nrp            String    @db.VarChar(7)
+  periode        String    @db.VarChar(20)
+  alamat         String    @db.VarChar(45)
+  keperluanPengajuan String @db.VarChar(255)
+    idPengajuan    Int   @unique 
+  
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+}
+
+model SuratKeteranganLulus {
+  id             Int       @id @default(autoincrement())
+  namaLengkap    String    @db.VarChar(100)
+  nrp            String    @db.VarChar(7)
+  tanggalLulus   DateTime  @db.Timestamp()
+  idPengajuan    Int   @unique 
+
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+}
+
+model LaporanHasilStudi {
+  id             Int       @id @default(autoincrement())
+  namaLengkap    String    @db.VarChar(100)
+  nrp            String    @db.VarChar(7)
+  keperluanPembuatan String @db.VarChar(255)
+   idPengajuan    Int   @unique 
+  
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+}
