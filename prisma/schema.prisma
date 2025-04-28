@@ -30,8 +30,7 @@ model Jurusan {
 model User {
   nik        String   @id @db.VarChar(7)
   nama       String   @db.VarChar(100)
-  email      String   @db.VarChar(45)
-  password   String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(45)
   alamat     String   @db.VarChar(45)
   periode    String   @db.VarChar(20)
   status     String?  @db.VarChar(20)

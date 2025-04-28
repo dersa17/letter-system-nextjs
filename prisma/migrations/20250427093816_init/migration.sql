@@ -19,7 +19,6 @@ CREATE TABLE "User" (
     "nik" VARCHAR(7) NOT NULL,
     "nama" VARCHAR(100) NOT NULL,
     "email" VARCHAR(45) NOT NULL,
-    "password" VARCHAR(100) NOT NULL,
     "alamat" VARCHAR(45) NOT NULL,
     "periode" VARCHAR(20) NOT NULL,
     "status" VARCHAR(20),
@@ -106,6 +105,9 @@ CREATE TABLE "LaporanHasilStudi" (
 
     CONSTRAINT "LaporanHasilStudi_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SuratTugasMk_idPengajuan_key" ON "SuratTugasMk"("idPengajuan");
