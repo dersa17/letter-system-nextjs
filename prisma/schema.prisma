@@ -21,14 +21,14 @@ model RoleUser {
 }
 
 model Jurusan {
-  kode String @id @db.VarChar(2)
+  id String @id @db.VarChar(2)
   nama String @db.VarChar(18)
   mataKuliah MataKuliah[]
   users    User[]
 }
 
 model User {
-  nik        String   @id @db.VarChar(7)
+  id        String   @id @db.VarChar(7)
   nama       String   @db.VarChar(100)
   email      String   @unique @db.VarChar(45)
   alamat     String   @db.VarChar(45)
@@ -41,7 +41,7 @@ model User {
   idJurusan  String?  @db.VarChar(2)
   
   role       RoleUser @relation(fields: [idRole], references: [id])
-  jurusan    Jurusan? @relation(fields: [idJurusan], references: [kode])
+  jurusan    Jurusan? @relation(fields: [idJurusan], references: [id])
   pengajuanSurat PengajuanSurat[]
 
   moPengajuan        PengajuanSurat[] @relation("MO")
@@ -49,12 +49,12 @@ model User {
 }
 
 model MataKuliah {
-  kode    String   @id @db.VarChar(12)
+  id    String   @id @db.VarChar(12)
   nama    String   @db.VarChar(100)
-  SKS     Int
+  sks     Int
   idJurusan String @db.VarChar(2)
   
-  jurusan  Jurusan @relation(fields: [idJurusan], references: [kode])
+  jurusan  Jurusan @relation(fields: [idJurusan], references: [id])
   suratTugasMk SuratTugasMk[]
 }
 
@@ -69,9 +69,9 @@ model PengajuanSurat {
   tanggalPersetujuan DateTime? @db.Timestamp()
   fileSurat        String?   @db.VarChar(255)
   tanggalUpload    DateTime? @db.Timestamp()
-  user             User      @relation(fields: [nrp], references: [nik])
-  mo               User?     @relation("MO", fields: [moNik], references: [nik])
-  kaprodi          User?     @relation("Kaprodi", fields: [kaprodiNik], references: [nik])
+  user             User      @relation(fields: [nrp], references: [id])
+  mo               User?     @relation("MO", fields: [moNik], references: [id])
+  kaprodi          User?     @relation("Kaprodi", fields: [kaprodiNik], references: [id])
 
   suratTugasMk SuratTugasMk?
   suratMahasiswaAktif SuratMahasiswaAktif?
@@ -90,7 +90,7 @@ model SuratTugasMk {
   kodeMk         String    @db.VarChar(12)
   
   pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
-  mataKuliah     MataKuliah     @relation(fields: [kodeMk], references: [kode])
+  mataKuliah     MataKuliah     @relation(fields: [kodeMk], references: [id])
 }
 
 model SuratMahasiswaAktif {
