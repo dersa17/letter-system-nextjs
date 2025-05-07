@@ -1,0 +1,85 @@
+import {create} from 'zustand'
+import axios from 'axios'
+import {toast} from 'sonner'
+import { Prisma } from '@prisma/client'
+
+
+type CourseStore = {
+    courses: Prisma.CourseGetPayload<{include: {
+      major: true
+    }}>[]
+    fetchCourses: () => Promise<void>
+    addCourse: (data: Prisma.CourseGetPayload<object>) => Promise<Prisma.CourseGetPayload<{include: {
+      major: true
+    }}> | null>
+    updateCourse: (id: string | number, data: Prisma.CourseGetPayload<object>) => Promise<Prisma.CourseGetPayload<{include: {
+      major: true
+    }}> | null>;
+    deleteCourse: (id: string | number) => Promise<void>;
+}
+
+const useCourseStore = create<CourseStore>((set) => ({
+    courses: [],
+    fetchCourses: async () => {
+        try {
+          const res = await axios.get('/api/admin/course');
+          set({ courses: res.data });
+        } catch (error) {
+          console.error('Failed to fetch courses:', error);
+          toast.error('Failed to fetch courses');
+        }
+      },
+      addCourse: async (data) => {
+        try {
+          const res = await axios.post('/api/admin/course', data);
+          set((state) => ({ courses: [...state.courses, res.data] }));
+          toast.success('Course successfully created!');
+          return res.data;
+        } catch (error) {
+          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
+          ? error.response.data.error
+          : 'An unexpected error occurred'
+          console.error('Failed to add course:', errorMessage);
+          toast.error(errorMessage);
+          return null;
+        }
+      },
+      updateCourse: async (id, data) => {
+        try {
+          const res = await axios.put(`/api/admin/course/${id}`, data);
+          set((state) => ({
+            courses: state.courses.map((course) =>
+              course.id === id ? { ...course, ...res.data } : course
+            ),
+          }));
+          toast.success('Course successfully updated!');
+          return res.data;
+        } catch (error) {
+          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
+          ? error.response.data.error
+          : 'An unexpected error occurred'
+          console.error('Failed to update course:', errorMessage);
+          toast.error(errorMessage);
+          return null;
+        }
+      },
+      deleteCourse: async (id) => {
+        try {
+          await axios.delete(`/api/admin/course/${id}`);
+          set((state) => ({
+            courses: state.courses.filter((course) => course.id !== id),
+          }));
+          toast.success('Course successfully deleted!');
+        } catch (error) {
+          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
+          ? error.response.data.error
+          : 'An unexpected error occurred'
+          console.error('Failed to delete course:', errorMessage);
+          toast.error(errorMessage);
+        }
+      },
+  
+
+}))
+
+export default useCourseStore

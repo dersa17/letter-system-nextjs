@@ -7,38 +7,39 @@ CREATE TABLE "RoleUser" (
 );
 
 -- CreateTable
-CREATE TABLE "Jurusan" (
-    "kode" VARCHAR(2) NOT NULL,
+CREATE TABLE "Major" (
+    "id" VARCHAR(2) NOT NULL,
     "nama" VARCHAR(18) NOT NULL,
 
-    CONSTRAINT "Jurusan_pkey" PRIMARY KEY ("kode")
+    CONSTRAINT "Major_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "User" (
-    "nik" VARCHAR(7) NOT NULL,
+    "id" VARCHAR(7) NOT NULL,
     "nama" VARCHAR(100) NOT NULL,
     "email" VARCHAR(45) NOT NULL,
+    "password" TEXT NOT NULL,
     "alamat" VARCHAR(45) NOT NULL,
     "periode" VARCHAR(20) NOT NULL,
     "status" VARCHAR(20),
-    "image" VARCHAR(30),
+    "image" TEXT,
     "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP NOT NULL,
+    "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "idRole" INTEGER NOT NULL,
-    "idJurusan" VARCHAR(2),
+    "idMajor" VARCHAR(2),
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("nik")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "MataKuliah" (
-    "kode" VARCHAR(12) NOT NULL,
+CREATE TABLE "Course" (
+    "id" VARCHAR(12) NOT NULL,
     "nama" VARCHAR(100) NOT NULL,
-    "SKS" INTEGER NOT NULL,
-    "idJurusan" VARCHAR(2) NOT NULL,
+    "sks" INTEGER NOT NULL,
+    "idMajor" VARCHAR(2) NOT NULL,
 
-    CONSTRAINT "MataKuliah_pkey" PRIMARY KEY ("kode")
+    CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -66,7 +67,7 @@ CREATE TABLE "SuratTugasMk" (
     "tujuan" VARCHAR(255) NOT NULL,
     "topik" VARCHAR(255) NOT NULL,
     "idPengajuan" INTEGER NOT NULL,
-    "kodeMk" VARCHAR(12) NOT NULL,
+    "idCourse" VARCHAR(12) NOT NULL,
 
     CONSTRAINT "SuratTugasMk_pkey" PRIMARY KEY ("id")
 );
@@ -125,25 +126,25 @@ CREATE UNIQUE INDEX "LaporanHasilStudi_idPengajuan_key" ON "LaporanHasilStudi"("
 ALTER TABLE "User" ADD CONSTRAINT "User_idRole_fkey" FOREIGN KEY ("idRole") REFERENCES "RoleUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_idJurusan_fkey" FOREIGN KEY ("idJurusan") REFERENCES "Jurusan"("kode") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_idMajor_fkey" FOREIGN KEY ("idMajor") REFERENCES "Major"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MataKuliah" ADD CONSTRAINT "MataKuliah_idJurusan_fkey" FOREIGN KEY ("idJurusan") REFERENCES "Jurusan"("kode") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Course" ADD CONSTRAINT "Course_idMajor_fkey" FOREIGN KEY ("idMajor") REFERENCES "Major"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_nrp_fkey" FOREIGN KEY ("nrp") REFERENCES "User"("nik") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_nrp_fkey" FOREIGN KEY ("nrp") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_moNik_fkey" FOREIGN KEY ("moNik") REFERENCES "User"("nik") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_moNik_fkey" FOREIGN KEY ("moNik") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_kaprodiNik_fkey" FOREIGN KEY ("kaprodiNik") REFERENCES "User"("nik") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "PengajuanSurat" ADD CONSTRAINT "PengajuanSurat_kaprodiNik_fkey" FOREIGN KEY ("kaprodiNik") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SuratTugasMk" ADD CONSTRAINT "SuratTugasMk_idPengajuan_fkey" FOREIGN KEY ("idPengajuan") REFERENCES "PengajuanSurat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SuratTugasMk" ADD CONSTRAINT "SuratTugasMk_kodeMk_fkey" FOREIGN KEY ("kodeMk") REFERENCES "MataKuliah"("kode") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SuratTugasMk" ADD CONSTRAINT "SuratTugasMk_idCourse_fkey" FOREIGN KEY ("idCourse") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SuratMahasiswaAktif" ADD CONSTRAINT "SuratMahasiswaAktif_idPengajuan_fkey" FOREIGN KEY ("idPengajuan") REFERENCES "PengajuanSurat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

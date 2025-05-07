@@ -4,20 +4,12 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 
 import {
-  Icon, IconMail, IconProps, IconNote, IconUser, IconBook, IconSchool,
-  IconCamera,
-  IconChartBar,
+  Icon, IconMail, IconProps, IconUser, IconBook, IconSchool,
   IconDashboard,
-  IconFileAi,
-  IconFileDescription,
-  IconFolder,
-  IconListDetails,
-  IconUsers,
+  IconFile,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -25,7 +17,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
@@ -35,82 +26,6 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-
 }
 
 
@@ -124,11 +39,11 @@ const menuAdmin = [
 ]
 const menuKaprodi = [
   {title: "Dashboard", url: "/kaprodi/dashboard", icon: IconDashboard },
-  { title: "Letter", url: "/kaprodi/letter", icon: IconNote },
+  { title: "Letter", url: "/kaprodi/letter", icon: IconFile },
 ]
 const menuMo = [
   {title: "Dashboard", url: "/mo/dashboard", icon: IconDashboard },
-  { title: "Letter", url: "/mo/letter", icon: IconNote },
+  { title: "Letter", url: "/mo/letter", icon: IconFile },
 ]
 
 let menu: { title: string; url: string; icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>> }[] | { title: string; url: string; icon?: Icon }[];
@@ -138,9 +53,9 @@ export function AppSidebar({role, ...props }: React.ComponentProps<typeof Sideba
 
   if (role === "Admin") {
     menu = menuAdmin
-  } else if (role == "Kepala Program Studi") {
+  } else if (role === "Kepala Program Studi") {
     menu = menuKaprodi
-  } else if (role == "Manager Operasional") {
+  } else if (role === "Manager Operasional") {
     menu = menuMo
   }
 

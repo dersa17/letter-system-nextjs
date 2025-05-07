@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -20,10 +19,10 @@ model RoleUser {
   users User[]
 }
 
-model Jurusan {
+model Major {
   id String @id @db.VarChar(2)
   nama String @db.VarChar(18)
-  mataKuliah MataKuliah[]
+  course Course[]
   users    User[]
 }
 
@@ -31,30 +30,31 @@ model User {
   id        String   @id @db.VarChar(7)
   nama       String   @db.VarChar(100)
   email      String   @unique @db.VarChar(45)
+  password   String  
   alamat     String   @db.VarChar(45)
   periode    String   @db.VarChar(20)
   status     String?  @db.VarChar(20)
-  image      String?  @db.VarChar(30)
+  image      String?  
   createdAt  DateTime @db.Timestamp() @default(now())
-  updatedAt  DateTime @db.Timestamp() @updatedAt
+  updatedAt  DateTime @db.Timestamp() @updatedAt @default(now())
   idRole     Int
-  idJurusan  String?  @db.VarChar(2)
+  idMajor  String?  @db.VarChar(2)
   
   role       RoleUser @relation(fields: [idRole], references: [id])
-  jurusan    Jurusan? @relation(fields: [idJurusan], references: [id])
+  major    Major? @relation(fields: [idMajor], references: [id])
   pengajuanSurat PengajuanSurat[]
 
   moPengajuan        PengajuanSurat[] @relation("MO")
   kaprodiPengajuan   PengajuanSurat[] @relation("Kaprodi")
 }
 
-model MataKuliah {
+model Course {
   id    String   @id @db.VarChar(12)
   nama    String   @db.VarChar(100)
   sks     Int
-  idJurusan String @db.VarChar(2)
+  idMajor String @db.VarChar(2)
   
-  jurusan  Jurusan @relation(fields: [idJurusan], references: [id])
+  major  Major @relation(fields: [idMajor], references: [id])
   suratTugasMk SuratTugasMk[]
 }
 
@@ -87,10 +87,10 @@ model SuratTugasMk {
   tujuan         String    @db.VarChar(255)
   topik          String    @db.VarChar(255)
   idPengajuan    Int   @unique 
-  kodeMk         String    @db.VarChar(12)
+  idCourse         String    @db.VarChar(12)
   
   pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
-  mataKuliah     MataKuliah     @relation(fields: [kodeMk], references: [id])
+  course     Course     @relation(fields: [idCourse], references: [id])
 }
 
 model SuratMahasiswaAktif {
@@ -100,7 +100,7 @@ model SuratMahasiswaAktif {
   periode        String    @db.VarChar(20)
   alamat         String    @db.VarChar(45)
   keperluanPengajuan String @db.VarChar(255)
-    idPengajuan    Int   @unique 
+  idPengajuan    Int       @unique 
   
   pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
 }
@@ -110,7 +110,7 @@ model SuratKeteranganLulus {
   namaLengkap    String    @db.VarChar(100)
   nrp            String    @db.VarChar(7)
   tanggalLulus   DateTime  @db.Timestamp()
-  idPengajuan    Int   @unique 
+  idPengajuan    Int       @unique 
 
   pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
 }
@@ -120,7 +120,7 @@ model LaporanHasilStudi {
   namaLengkap    String    @db.VarChar(100)
   nrp            String    @db.VarChar(7)
   keperluanPembuatan String @db.VarChar(255)
-   idPengajuan    Int   @unique 
+  idPengajuan    Int       @unique 
   
   pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
 }
