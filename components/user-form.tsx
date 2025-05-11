@@ -12,7 +12,7 @@
   import { z } from "zod";
   import { Input } from "./ui/input";
   import { Button } from "./ui/button";
-  import { userSchema } from "@/lib/schemas";
+  import { userCreateSchema, userUpdateSchema } from "@/lib/schemas";
   import { Prisma } from "@prisma/client";
   import useUserStore from "@/app/stores/user-store"
   import useMajorStore from "@/app/stores/major-store";
@@ -42,32 +42,33 @@
         fetchRoles()
       }, [fetchMajors, fetchRoles]);
 
+const schema = initialData ? userUpdateSchema : userCreateSchema
+const form = useForm<z.infer<typeof schema>>({
+  resolver: zodResolver(schema),
+  defaultValues: {
+    id: initialData?.id || "",
+    nama: initialData?.nama || "",
+    email: initialData?.email || "",
+    password: "",
+    alamat: initialData?.alamat || "",
+    periode: initialData?.periode || "",
+    status: initialData?.status || undefined,
+    image: undefined,
+    idRole: initialData?.idRole || undefined,
+    idMajor: initialData?.idMajor || undefined,
+  },
+})
 
-    const form = useForm<z.infer<typeof userSchema>>({
-      resolver: zodResolver(userSchema),
-      defaultValues: {
-        id: initialData?.id || "",
-        nama: initialData?.nama || "",
-        email: initialData?.email || "",
-        password: initialData?.password || "", 
-        alamat: initialData?.alamat || "",
-        periode: initialData?.periode || "",
-        status: initialData?.status || "",
-        image: undefined,
-        idRole: initialData?.idRole || undefined,
-        idMajor: initialData?.idMajor || "", 
-      },
-    });
 
 
-
-    async function onSubmit(values: z.infer<typeof userSchema>) {
+    async function onSubmit(values: z.infer<typeof schema>) {
       const formData = new FormData()
 
       formData.append("id", values.id);
       formData.append("nama", values.nama);
       formData.append("email", values.email);
-      formData.append("password", values.password);
+
+      if (values.password) formData.append("password", values.password);
       formData.append("alamat", values.alamat);
       formData.append("periode", values.periode);
       if (values.status) formData.append("status", values.status);
@@ -139,7 +140,7 @@
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="shadcn" {...field} autoComplete="off" />
+                  <Input type="password" placeholder="shadcn" {...field}  autoComplete="off" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

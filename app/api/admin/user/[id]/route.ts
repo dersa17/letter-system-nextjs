@@ -1,8 +1,9 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { userSchema } from '@/lib/schemas';
+import { userUpdateSchema } from '@/lib/schemas';
 import { z } from 'zod';
 import {put}  from "@vercel/blob"
+import bcrypt from 'bcryptjs';
 
 export async function PUT(
     req: NextRequest, 
@@ -16,22 +17,27 @@ export async function PUT(
         id: formData.get("id"),
         nama: formData.get("nama"),
         email: formData.get("email"),
-        password: formData.get("password"),
+        ...(formData.get("password") && { password: formData.get("password") }),
         alamat: formData.get("alamat"),
         periode: formData.get("periode"),
-        status: formData.get("status") || null,
+        ...(formData.get("status") && { status: formData.get("status") }),
         idRole: Number(formData.get("idRole")),
-        idMajor: formData.get("idMajor") || null,
-        image: formData.get("image") || null, 
+        ...(formData.get("idMajor") && { idMajor: formData.get("idMajor") }),
+        ...(formData.get("image") && { image: formData.get("image") })
       };
-    
-    const validatedData = userSchema.parse(data)
+
+      const validatedData = userUpdateSchema.parse(data)
+
+    if (validatedData.password) {
+        const  hashedPassword = await bcrypt.hash(validatedData.password, 10)
+      validatedData.password = hashedPassword
+    }
 
     let imageUrl
 
-    if (data.image) {
+    if (validatedData.image) {
 
-        const imageFile = data.image as File;
+        const imageFile = validatedData.image as File;
         const extension = imageFile.name.split('.').pop();
 
        const blob = await put(`image/${data.id}.${extension}`, imageFile, {
@@ -39,9 +45,7 @@ export async function PUT(
             allowOverwrite: true,
           });
        imageUrl = blob.url
-    } else {
-       imageUrl = "https://gb9oyv3aknnnvqa0.public.blob.vercel-storage.com/image/defaultprofile.jpg"
-    }
+    } 
 
     const updatedData = await prisma.user.update({
       where: { id },
@@ -66,7 +70,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string  } }) {
+export async function DELETE({ params }: { params: { id: string  } }) {
   try {
     const { id } = await params;
 

@@ -2,13 +2,13 @@
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
-
+import { getSession } from "next-auth/react"
 import {
   Icon, IconMail, IconProps, IconUser, IconBook, IconSchool,
   IconDashboard,
   IconFile,
 } from "@tabler/icons-react"
-
+import { Prisma } from "@prisma/client"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -20,16 +20,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "",
+    email: "",
+    avatar: "",
   },
 }
-
-
-
 
 const menuAdmin = [
   {title: "Dashboard", url: "/admin/dashboard", icon: IconDashboard },
@@ -46,19 +44,50 @@ const menuMo = [
   { title: "Letter", url: "/mo/letter", icon: IconFile },
 ]
 
-let menu: { title: string; url: string; icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>> }[] | { title: string; url: string; icon?: Icon }[];
-
-
-export function AppSidebar({role, ...props }: React.ComponentProps<typeof Sidebar>) {
-
-  if (role === "Admin") {
-    menu = menuAdmin
-  } else if (role === "Kepala Program Studi") {
-    menu = menuKaprodi
-  } else if (role === "Manager Operasional") {
-    menu = menuMo
+type User = Prisma.UserGetPayload<{include:{
+  role: true
+  major: true
+}}> & {
+  emailVerified: Date | null; // Menambahkan properti emailVerified
+};
+interface Session {
+    user: User; 
   }
 
+type MenuItem = {
+  title: string;
+  url: string;
+  icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>>;
+};
+
+export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
+  const [session, setSession] = React.useState<Session | null>(null); 
+  const [menu, setMenu] = React.useState<MenuItem[]>([]); 
+
+  React.useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      setSession(session);
+
+      if (session?.user?.idRole === 1) {
+        setMenu(menuAdmin);
+      } else if (session?.user?.idRole === 2) {
+        setMenu(menuKaprodi);
+      } else if (session?.user?.idRole === 3) {
+        setMenu(menuMo);
+      }
+
+      data.user.name = session?.user?.nama ?? ""
+      data.user.email = session?.user?.email ?? ""
+      data.user.avatar = session?.user?.image ?? ""
+    };
+
+    fetchSession();
+  }, []);
+
+   if (!session) {
+    return <div>Loading...</div>; // Tampilkan loading jika session belum ada
+  }
 
   return (
 
@@ -68,7 +97,7 @@ export function AppSidebar({role, ...props }: React.ComponentProps<typeof Sideba
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem  className="flex items-center justify-between gap-2">
-                <span className="text-xl font-semibold !p-1.5">{role}</span>
+                <span className="text-xl font-semibold !p-1.5">{session?.user?.role?.nama}</span>
       
             <Button
               size="icon"

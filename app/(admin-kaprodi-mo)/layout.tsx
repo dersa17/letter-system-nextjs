@@ -1,8 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar"
-
 import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
+
+
 
 const layout = ({children}: Readonly<{children: React.ReactNode}>) => {
   return (
@@ -14,8 +15,8 @@ const layout = ({children}: Readonly<{children: React.ReactNode}>) => {
       } as React.CSSProperties
     }
   >
-    <AppSidebar variant="inset" role="Manager Operasional" />
-   {children}
+    <AppSidebar variant="inset"/>
+   {children} 
   </SidebarProvider>
   )
 }

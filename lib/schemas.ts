@@ -3,20 +3,38 @@ import {z} from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
 
-export const userSchema = z.object ({
+export const userCreateSchema = z.object ({
     id: z.string().max(7).nonempty(),
     nama: z.string().max(100).nonempty(),
     email: z.string().email().max(45).nonempty(),
-    password: z.string().nonempty().nonempty(),
+    password: z.string().nonempty(),
     alamat: z.string().max(45).nonempty(),
     periode: z.string().max(20).nonempty(),
-    status: z.string().max(20).nullable(),
+    status: z.string().max(20).optional(),
     image:
         z.instanceof(File).refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
             message: "Only .jpg, .png, .webp, and .jpeg formats are supported.",
         }).refine((file) => file.size <= MAX_FILE_SIZE, {
             message: "Max image size is 5MB.",
-        }).optional().nullable(),
+        }).optional(),
+    idRole: z.number(),
+    idMajor: z.string().max(2).optional()
+})
+
+export const userUpdateSchema = z.object ({
+    id: z.string().max(7).nonempty(),
+    nama: z.string().max(100).nonempty(),
+    email: z.string().email().max(45).nonempty(),
+    password: z.string().optional(),
+    alamat: z.string().max(45).nonempty(),
+    periode: z.string().max(20).nonempty(),
+    status: z.string().max(20).optional(),
+    image:
+        z.instanceof(File).refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+            message: "Only .jpg, .png, .webp, and .jpeg formats are supported.",
+        }).refine((file) => file.size <= MAX_FILE_SIZE, {
+            message: "Max image size is 5MB.",
+        }).optional(),
     idRole: z.number(),
     idMajor: z.string().max(2).optional()
 })
@@ -39,13 +57,13 @@ export const courseSchema = z.object({
 export const pengajuanSuratSchema = z.object({
     fileSurat: z.instanceof(File).refine((file) => file.type === "application/pdf", {
         message: "Only .pdf format is supported.",
-      }).optional().nullable(),
+      }).optional(),
   });
 
 
 export const suratTugasMkSchema = z.object({
     tujuanInstansi: z.string().max(255),
-    periode: z.string().max(20).nullable().optional(),
+    periode: z.string().max(20).optional(),
     dataMahasiswa: z.string().max(255),
     tujuan: z.string().max(255),
     topik: z.string().max(255),
