@@ -8,7 +8,7 @@ export async function PUT(
     { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const data = await req.json();
 
     const validatedData = majorSchema.parse(data);
@@ -29,9 +29,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE({ params }: { params: { id: string  } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string  } }) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     await prisma.major.delete({
       where: { id },

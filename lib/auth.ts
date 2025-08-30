@@ -2,26 +2,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "./prisma";
-import { Prisma } from "@prisma/client";
 
-
-type User = Prisma.UserGetPayload<{include:{
-  role: true
-  major: true
-}}> & {
-  emailVerified: Date | null; // Menambahkan properti emailVerified
-};
-
-declare module "next-auth" {
-   interface Session {
-    user: User; 
-  }
-  
-}
-
-
-// Ekspor langsung handlers, signIn, signOut, auth
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -30,46 +12,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Mencari user berdasarkan ID yang diberikan
         const user = await prisma.user.findUnique({
           where: { id: credentials?.id as string },
-          include: {role: true, major: true}
-          // Menambahkan role dan major pada user
+          include: { role: true }, // cukup ambil role
         });
 
-        // Memeriksa apakah user ditemukan dan password sesuai
-        if (user && await bcrypt.compare(credentials.password as string , user.password)) {
-         return {
-            ...user,
-            emailVerified: null, // Set emailVerified menjadi null jika tidak ada
+        if (user && await bcrypt.compare(credentials.password as string, user.password)) {
+          // Hanya return data minimal
+          return {
+            id: user.id,
+            email: user.email,
+            role: user.role, // simpan role name / bisa juga id
           };
         }
-        return null; // Jika tidak ada user atau password salah
+        return null;
       },
     }),
   ],
   pages: {
-    signIn: "/login", // Menetapkan halaman login kustom
+    signIn: "/login",
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // Menyimpan informasi user ke dalam token JWT
-        token.user = user;
+        token.userId = user.id;
+        token.email = user.email;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token?.user) {
-        // Menyimpan informasi user ke dalam session
-        session.user = token.user as User;
-      }
+      session.user = {
+        id: token.userId as string,
+        email: token.email as string,
+        role: token.role as string,
+      };
       return session;
     },
   },
-    session: {
+  session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET, // Menggunakan secret untuk enkripsi JWT
-});
+  secret: process.env.AUTH_SECRET,
+};
 
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);

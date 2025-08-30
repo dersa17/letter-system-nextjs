@@ -3,6 +3,39 @@ import {z} from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
 
+
+export const profileUpdateSchema = z
+  .object({
+    nama: z.string().max(100).nonempty(),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+    alamat: z.string().max(45).nonempty(),
+    image: z
+      .instanceof(File)
+      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+        message: "Only .jpg, .png, .webp, and .jpeg formats are supported.",
+      })
+      .refine((file) => file.size <= MAX_FILE_SIZE, {
+        message: "Max image size is 5MB.",
+      })
+      .optional(),
+  })
+  .refine(
+    (data) => !data.password || data.password.length >= 8,
+    {
+      path: ["password"],
+      message: "Password must contain at least 8 character(s)",
+    }
+  )
+  .refine(
+    (data) => !data.password || data.password === data.confirmPassword,
+    {
+      path: ["confirmPassword"],
+      message: "Password and confirmation do not match",
+    }
+  );
+
+
 export const userCreateSchema = z.object ({
     id: z.string().max(7).nonempty(),
     nama: z.string().max(100).nonempty(),

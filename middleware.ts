@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
-  const role = token.user?.idRole;
+  const role = token.role?.id;
 
   if (pathname === "/") {
     const redirectPath = roleRedirectMap[role];

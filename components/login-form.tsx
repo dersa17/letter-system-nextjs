@@ -35,14 +35,15 @@ export function LoginForm({
   } else if (res?.ok) {
    const session = await getSession();
 
+    console.log("testing: ", session?.user?.role.id)
 
-    if (session?.user?.idRole === 1) {
+    if (session?.user?.role.id === 1) {
       router.push("/admin/dashboard");
-    } else if (session?.user?.idRole === 2) {
+    } else if (session?.user?.role.id === 2) {
       router.push("/mo/dashboard");
-    } else if (session?.user?.idRole === 3) {
+    } else if (session?.user?.role.id === 3) {
       router.push("/kaprodi/dashboard");
-    } else if (session?.user?.idRole === 4) {
+    } else if (session?.user?.role.id === 4) {
       router.push("/mahasiswa/home");
     } else {
       router.push("/login");

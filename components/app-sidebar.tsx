@@ -19,7 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
+import useProfileStore from "@/app/stores/profile-store"
 
 const data = {
   user: {
@@ -63,59 +63,74 @@ type MenuItem = {
 export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
   const [session, setSession] = React.useState<Session | null>(null); 
   const [menu, setMenu] = React.useState<MenuItem[]>([]); 
+  const [userDisplay, setUserDisplay] = React.useState({
+    name: "",
+    email: "",
+    avatar: "",
+  });
+  const { profile, fetchProfile } = useProfileStore();
 
+  // Fetch session dan set menu
   React.useEffect(() => {
     const fetchSession = async () => {
-      const session = await getSession();
-      setSession(session);
+      const sess = await getSession();
+      setSession(sess as Session);
 
-      if (session?.user?.idRole === 1) {
-        setMenu(menuAdmin);
-      } else if (session?.user?.idRole === 2) {
-        setMenu(menuKaprodi);
-      } else if (session?.user?.idRole === 3) {
-        setMenu(menuMo);
-      }
+      if (sess?.user?.role.id === 1) setMenu(menuAdmin);
+      else if (sess?.user?.role.id === 2) setMenu(menuMo);
+      else if (sess?.user?.role.id === 3) setMenu(menuKaprodi);
 
-      data.user.name = session?.user?.nama ?? ""
-      data.user.email = session?.user?.email ?? ""
-      data.user.avatar = session?.user?.image ?? ""
+      setUserDisplay(prev => ({
+        ...prev,
+        email: sess?.user?.email ?? "",
+      }));
     };
-
     fetchSession();
   }, []);
 
-   if (!session) {
-    return <div>Loading...</div>; // Tampilkan loading jika session belum ada
-  }
+  // Fetch profile
+  React.useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // Update nama user dari profile setelah fetch
+  React.useEffect(() => {
+    if (profile) {
+      setUserDisplay(prev => ({
+        ...prev,
+        name: profile.nama ?? "",
+        avatar: profile.image ?? "",
+      }));
+    }
+  }, [profile]);
 
   return (
-
-
-
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem  className="flex items-center justify-between gap-2">
-                <span className="text-xl font-semibold !p-1.5">{session?.user?.role?.nama}</span>
-      
-            <Button
-              size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
-              variant="outline"
-            >
-              <IconMail />
-              <span className="sr-only">Inbox</span>
-            </Button>
+          <SidebarMenuItem className="flex items-center justify-between gap-2">
+            <span className="text-xl font-semibold !p-1.5">{session?.user?.role?.nama}</span>
+            {session?.user?.role.id !== 1 && (
+              <Button
+                size="icon"
+                className="size-8 group-data-[collapsible=icon]:opacity-0"
+                variant="outline"
+              >
+                <IconMail />
+                <span className="sr-only">Inbox</span>
+              </Button>
+            )}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <NavMain items={menu} />
       </SidebarContent>
+
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userDisplay} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

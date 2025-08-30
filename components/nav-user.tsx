@@ -26,6 +26,7 @@ import {
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+
 export function NavUser({
   user,
 }: {
@@ -81,7 +82,9 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                router.push("/profile")
+              }}>
                 <IconUserCircle />
                 Profile
               </DropdownMenuItem>
