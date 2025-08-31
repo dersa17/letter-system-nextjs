@@ -1,9 +1,15 @@
+import Navbar from '@/components/navbar'
 import React from 'react'
 
-const page = () => {
+const layout = ({children}:  Readonly<{children: React.ReactNode}>) => {
   return (
-    <div>Mahasiswa Page</div>
+    <>
+    <Navbar/>
+    {children}
+    </>
+
+
   )
 }
 
-export default page
+export default layout
