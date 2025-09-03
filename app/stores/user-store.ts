@@ -25,7 +25,7 @@ const useUserStore = create<UserStore>((set) => ({
      users: [],
     fetchUsers: async () => {
         try {
-          const res = await axios.get('/api/admin/user');
+          const res = await axios.get('/api/user');
           set({ users: res.data });
         } catch (error) {
           console.error('Failed to fetch users:', error);
@@ -34,7 +34,7 @@ const useUserStore = create<UserStore>((set) => ({
       },
       addUser: async (data) => {
         try {
-          const res = await axios.post('/api/admin/user', data);
+          const res = await axios.post('/api/user', data);
           set((state) => ({ users: [...state.users, res.data] }));
           toast.success('User successfully created!');
           return res.data;
@@ -49,7 +49,7 @@ const useUserStore = create<UserStore>((set) => ({
       },
       updateUser: async (id, data) => {
         try {
-          const res = await axios.put(`/api/admin/user/${id}`, data);
+          const res = await axios.put(`/api/user/${id}`, data);
           set((state) => ({
             users: state.users.map((user) =>
               user.id === id ? { ...user, ...res.data } : user
@@ -68,7 +68,7 @@ const useUserStore = create<UserStore>((set) => ({
       },
       deleteUser: async (id) => {
         try {
-          await axios.delete(`/api/admin/user/${id}`);
+          await axios.delete(`/api/user/${id}`);
           set((state) => ({
             users: state.users.filter((user) => user.id !== id),
           }));

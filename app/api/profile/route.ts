@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { profileUpdateSchema } from "@/lib/schemas";
+import { profileUpdateSchema } from "@/lib/schema.zod";
 import { z } from "zod";
 import { put } from "@vercel/blob";
 import bcrypt from "bcryptjs";

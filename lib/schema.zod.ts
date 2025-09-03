@@ -95,38 +95,34 @@ export const pengajuanSuratSchema = z.object({
 
 
 export const suratTugasMkSchema = z.object({
-    tujuanInstansi: z.string().max(255),
-    periode: z.string().max(20).optional(),
-    dataMahasiswa: z.string().max(255),
-    tujuan: z.string().max(255),
-    topik: z.string().max(255),
-    idPengajuan: z.number(),
-    idCourse: z.string().max(12),
+    tujuanInstansi: z.string().max(255).nonempty(),
+    periode: z.string().max(20).nonempty(),
+    dataMahasiswa: z.string().max(255).nonempty(),
+    tujuan: z.string().max(255).nonempty(),
+    topik: z.string().max(255).nonempty(),
+    idCourse: z.string().max(12).nonempty(),
   });
 
 
   export const suratMahasiswaAktifSchema = z.object({
-    namaLengkap: z.string().max(100),
-    nrp: z.string().max(7),
-    periode: z.string().max(20),
-    alamat: z.string().max(45),
-    keperluanPengajuan: z.string().max(255),
-    idPengajuan: z.number(),
+    namaLengkap: z.string().max(100).nonempty(),
+    nrp: z.string().max(7).nonempty(),
+    periode: z.string().max(20).nonempty(),
+    alamat: z.string().max(45).nonempty(),
+    keperluanPengajuan: z.string().max(255).nonempty(),
   });
   
 
   export const suratKeteranganLulusSchema = z.object({
-    namaLengkap: z.string().max(100),
-    nrp: z.string().max(7),
-    tanggalLulus: z.date(),
-    idPengajuan: z.number(),
+    namaLengkap: z.string().max(100).nonempty(),
+    nrp: z.string().max(7).nonempty(),
+    tanggalLulus: z.string().nonempty(),
   });
 
   export const laporanHasilStudiSchema = z.object({
-    namaLengkap: z.string().max(100),
-    nrp: z.string().max(7),
-    keperluanPembuatan: z.string().max(255),
-    idPengajuan: z.number(),
+    namaLengkap: z.string().max(100).nonempty(),
+    nrp: z.string().max(7).nonempty(),
+    keperluanPembuatan: z.string().max(255).nonempty(),
   });
 
 

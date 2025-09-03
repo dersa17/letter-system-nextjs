@@ -1,9 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { userCreateSchema } from "@/lib/schemas";
+import { userCreateSchema } from "@/lib/schema.zod";
 import { z } from "zod";
 import { put } from "@vercel/blob";
 import bcrypt from "bcryptjs";
+
 
 export async function GET() {
   try {

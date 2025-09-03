@@ -27,7 +27,6 @@ const useProfileStore = create<ProfileStore>((set) => ({
   isLoading: false,
 
   fetchProfile: async () => {
-    set({ isLoading: true });
     try {
       const res = await axios.get(`/api/profile`);
       set({ profile: res.data });
@@ -35,7 +34,6 @@ const useProfileStore = create<ProfileStore>((set) => ({
       console.error('Failed to fetch profile:', error);
       toast.error('Failed to fetch profile');
     } finally {
-      set({ isLoading: false });
     }
   },
 

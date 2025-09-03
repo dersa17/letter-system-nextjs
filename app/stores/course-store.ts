@@ -22,7 +22,7 @@ const useCourseStore = create<CourseStore>((set) => ({
     courses: [],
     fetchCourses: async () => {
         try {
-          const res = await axios.get('/api/admin/course');
+          const res = await axios.get('/api/course');
           set({ courses: res.data });
         } catch (error) {
           console.error('Failed to fetch courses:', error);
@@ -31,7 +31,7 @@ const useCourseStore = create<CourseStore>((set) => ({
       },
       addCourse: async (data) => {
         try {
-          const res = await axios.post('/api/admin/course', data);
+          const res = await axios.post('/api/course', data);
           set((state) => ({ courses: [...state.courses, res.data] }));
           toast.success('Course successfully created!');
           return res.data;
@@ -46,7 +46,7 @@ const useCourseStore = create<CourseStore>((set) => ({
       },
       updateCourse: async (id, data) => {
         try {
-          const res = await axios.put(`/api/admin/course/${id}`, data);
+          const res = await axios.put(`/api/course/${id}`, data);
           set((state) => ({
             courses: state.courses.map((course) =>
               course.id === id ? { ...course, ...res.data } : course
@@ -65,7 +65,7 @@ const useCourseStore = create<CourseStore>((set) => ({
       },
       deleteCourse: async (id) => {
         try {
-          await axios.delete(`/api/admin/course/${id}`);
+          await axios.delete(`/api/course/${id}`);
           set((state) => ({
             courses: state.courses.filter((course) => course.id !== id),
           }));

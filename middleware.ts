@@ -2,7 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Mapping role ke path dashboard
+
 const roleRedirectMap: Record<number, string> = {
   1: "/admin/dashboard",
   2: "/mo/dashboard",
@@ -10,25 +10,49 @@ const roleRedirectMap: Record<number, string> = {
   4: "/mahasiswa/home",
 };
 
-// Akses yang diizinkan per role
-const roleAccessPaths: Record<number, string[]> = {
-  1: ["/admin"],
-  2: ["/mo"],
-  3: ["/kaprodi"],
-  4: ["/mahasiswa"],
+const pathMethodAccess: Record<string, Record<string, number[]>> = {
+  "/admin": {
+    GET: [1],
+  },
+  "/mo": {
+    GET: [2],
+  },
+  "/kaprodi": {
+    GET: [3],
+  },
+  "/mahasiswa": {
+    GET: [4],
+  },
+  "/profile": {
+    GET: [1,2,3]
+  },
+  "/api/course": {
+    GET: [1,2,3,4],   
+    POST: [1],    
+  },
+  "/api/profile": {
+    GET: [1,2,3,4]
+  },
+  "/api/letter": {
+    GET: [4],
+    POST: [4],
+    DELETE: [4]
+  }
 };
 
-
-
-
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
 
-  if (!token) {
+  if (!token?.sub) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const pathname = request.nextUrl.pathname;
+  const method = request.method;
   const role = token.role?.id;
 
   if (pathname === "/") {
@@ -38,16 +62,32 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const allowedPaths = roleAccessPaths[role] || [];
-  const isAllowed = allowedPaths.some((allowedPath) => pathname.startsWith(allowedPath));
+  if (pathname.startsWith("/api")) {
+  // cek role + method
+  const allowedRoles = Object.entries(pathMethodAccess)
+    .find(([path]) => pathname.startsWith(path))?.[1][method] || [];
+  if (!allowedRoles.includes(role)) return new NextResponse("Forbidden", { status: 403 });
+} else {
+  // cek role untuk halaman saja
+  const allowedRoles = Object.entries(pathMethodAccess)
+    .find(([path]) => pathname.startsWith(path))?.[1].GET || [];
+  if (!allowedRoles.includes(role)) return new NextResponse("Forbidden", { status: 403 });
+}
 
-  if (!isAllowed) {
-    return new NextResponse("Forbidden", { status: 403 }); 
-  }
 
+  // Lanjut ke route
   return NextResponse.next();
 }
 
+// Matcher untuk semua halaman + API
 export const config = {
-  matcher: ["/", "/admin/:path*", "/mo/:path*", "/kaprodi/:path*", "/mahasiswa/:path*"],
+  matcher: [
+    "/",
+    "/admin/:path*",
+    "/mo/:path*",
+    "/kaprodi/:path*",
+    "/mahasiswa/:path*",
+    "/api/:path*",
+    "/profile"
+  ],
 };

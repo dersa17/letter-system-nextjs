@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useProfileStore from "@/app/stores/profile-store";
-import { profileUpdateSchema } from "@/lib/schemas";
+import { profileUpdateSchema } from "@/lib/schema.zod";
 import { z } from "zod";
 
 const ProfileForm = () => {

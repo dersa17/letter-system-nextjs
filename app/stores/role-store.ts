@@ -13,7 +13,7 @@ const useRoleStore = create<RoleUserStore>((set) => ({
     roles: [],
     fetchRoles: async () => {
         try {
-          const res = await axios.get('/api/admin/role');
+          const res = await axios.get('/api/role');
           set({ roles: res.data });
         } catch (error) {
           console.error('Failed to fetch roles:', error);

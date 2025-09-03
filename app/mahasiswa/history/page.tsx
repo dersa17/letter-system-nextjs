@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Download, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarIcon, Download, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -25,44 +25,66 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
+import useLetterStore from "@/app/stores/letter-store";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { CheckCircle, Clock, XCircle, Flag } from "lucide-react";
+import DialogDelete from '@/components/dialog-delete'
+import LetterDetailDrawer from "@/components/LetterDetailDrawer";
 
-// Dummy data
-const applicationData = [
-  { id: "APP-001", letterType: "Course Assignment Letters", status: "Approved", submissionDate: new Date("2024-01-15"), approvalDate: new Date("2024-01-18"), uploadDate: new Date("2024-01-20") },
-  { id: "APP-002", letterType: "Active Student Letters", status: "Pending", submissionDate: new Date("2024-01-20"), approvalDate: null, uploadDate: null },
-  { id: "APP-003", letterType: "Graduation Certificates", status: "Rejected", submissionDate: new Date("2024-01-10"), approvalDate: new Date("2024-01-12"), uploadDate: null },
-  { id: "APP-004", letterType: "Study Result Report Letters", status: "Approved", submissionDate: new Date("2024-01-05"), approvalDate: new Date("2024-01-08"), uploadDate: new Date("2024-01-10") },
-  { id: "APP-005", letterType: "Active Student Letters", status: "Pending", submissionDate: new Date("2024-01-25"), approvalDate: null, uploadDate: null },
-  // Tambahkan data dummy tambahan supaya pagination terlihat
-  { id: "APP-006", letterType: "Course Assignment Letters", status: "Approved", submissionDate: new Date("2024-02-01"), approvalDate: new Date("2024-02-03"), uploadDate: new Date("2024-02-05") },
-  { id: "APP-007", letterType: "Active Student Letters", status: "Rejected", submissionDate: new Date("2024-02-02"), approvalDate: new Date("2024-02-04"), uploadDate: null },
-];
 
-const letterTypes = ["Course Assignment Letters", "Active Student Letters", "Graduation Certificates", "Study Result Report Letters"];
-const statusOptions = ["Pending", "Approved", "Rejected"];
+const letterTypes = ["Tugas Mata Kuliah", "Keterangan Lulus", "Mahasiswa Aktif", "Laporan Hasil Studi"];
+const statusOptions = ["Pending", "Approved", "Rejected", "Finished"];
 
 const Page = () => {
+  const { letters, fetchLetters, deleteLetter } = useLetterStore()
   const [letterTypeFilter, setLetterTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [isOpenDialogDelete, setOpenDialogDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchLetters()
+  }, [fetchLetters])
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive"> = {
-      Approved: "default",
-      Pending: "secondary",
-      Rejected: "destructive",
+    const variants: Record<string, string> = {
+      Approved: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+      Pending: "bg-amber-100 text-amber-700 border border-amber-200",
+      Rejected: "bg-rose-100 text-rose-700 border border-rose-200",
+      Finished: "bg-indigo-100 text-indigo-700 border border-indigo-200",
     };
-    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
-  };
 
-  const filteredData = applicationData.filter((item) => {
-    if (letterTypeFilter !== "all" && item.letterType !== letterTypeFilter) return false;
+    const icons: Record<string, ReactNode> = {
+      Approved: <CheckCircle className="mr-1 h-3.5 w-3.5" />,
+      Pending: <Clock className="mr-1 h-3.5 w-3.5" />,
+      Rejected: <XCircle className="mr-1 h-3.5 w-3.5" />,
+      Finished: <Flag className="mr-1 h-3.5 w-3.5" />,
+    };
+
+    return (
+      <Badge
+        className={`inline-flex items-center ${variants[status] || "bg-gray-100 text-gray-700 border border-gray-200"}`}
+      >
+        {icons[status]}
+        {status}
+      </Badge>
+    );
+  };
+  const filteredData = letters.filter((item) => {
+    const pengajuanDate = new Date(item.tanggalPengajuan); // 🔑 convert dulu
+
+    if (letterTypeFilter !== "all" && item.jenisSurat !== letterTypeFilter) return false;
     if (statusFilter !== "all" && item.status !== statusFilter) return false;
-    if (dateRange?.from && item.submissionDate < dateRange.from) return false;
-    if (dateRange?.to && item.submissionDate > dateRange.to) return false;
+    if (dateRange?.from && pengajuanDate < dateRange.from) return false;
+    if (dateRange?.to && pengajuanDate > dateRange.to) return false;
     return true;
   });
 
@@ -71,6 +93,12 @@ const Page = () => {
 
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+
+  const handleOpenDialogDelete = (id: number) => {
+    setDeleteId(id);
+    setOpenDialogDelete(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,10 +131,10 @@ const Page = () => {
                 <label className="text-sm font-medium">Status</label>
                 <Select value={statusFilter} onValueChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All statuses" />
+                    <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All statuses</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     {statusOptions.map((status) => (
                       <SelectItem key={status} value={status}>{status}</SelectItem>
                     ))}
@@ -176,25 +204,40 @@ const Page = () => {
                 {paginatedData.map((application) => (
                   <TableRow key={application.id}>
                     <TableCell className="font-medium">{application.id}</TableCell>
-                    <TableCell>{application.letterType}</TableCell>
+                    <TableCell>{application.jenisSurat}</TableCell>
                     <TableCell>{getStatusBadge(application.status)}</TableCell>
-                    <TableCell>{format(application.submissionDate, "MMM dd, yyyy")}</TableCell>
-                    <TableCell>{application.approvalDate ? format(application.approvalDate, "MMM dd, yyyy") : "-"}</TableCell>
-                    <TableCell>{application.uploadDate ? format(application.uploadDate, "MMM dd, yyyy") : "-"}</TableCell>
+                    <TableCell>{format(application.tanggalPengajuan, "MMM dd, yyyy")}</TableCell>
+                    <TableCell>{application.tanggalPersetujuan ? format(application.tanggalPersetujuan, "MMM dd, yyyy") : "-"}</TableCell>
+                    <TableCell>{application.tanggalUpload ? format(application.tanggalUpload, "MMM dd, yyyy") : "-"}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        {application.status === "Approved" && application.uploadDate && (
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                            <Download className="h-4 w-4" />
-                          </Button>
+                        {application.status === "Finished" && application.tanggalUpload && (
+                          <Tooltip>
+                            <TooltipTrigger asChild><Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                              <Download className="h-4 w-4" />
+                            </Button></TooltipTrigger>
+                            <TooltipContent>
+                              <p>Download</p>
+                            </TooltipContent>
+                          </Tooltip>
+
                         )}
-                        <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                          <Eye className="h-4 w-4" />
-                        </Button>
+
+                        <LetterDetailDrawer letter={application} />
+
                         {application.status === "Pending" && (
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                            <X className="h-4 w-4" />
-                          </Button>
+                          <>
+                            <Tooltip>
+                              <TooltipTrigger asChild><Button onClick={() => handleOpenDialogDelete(application.id)} size="sm" variant="outline" className="h-8 w-8 p-0">
+                                <X className="h-4 w-4" />
+                              </Button></TooltipTrigger>
+                              <TooltipContent>
+                                <p>Delete</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <DialogDelete open={isOpenDialogDelete} onOpenChange={setOpenDialogDelete} onDelete={() => deleteId !== null && deleteLetter(deleteId)} />
+                          </>
+
                         )}
                       </div>
                     </TableCell>

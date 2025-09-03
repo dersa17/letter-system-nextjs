@@ -64,7 +64,7 @@ model PengajuanSurat {
   moNik            String?   @db.VarChar(7)
   kaprodiNik       String?   @db.VarChar(7)
   jenisSurat       String    @db.VarChar(33)
-  status           String    @db.VarChar(25)
+  status           String    @db.VarChar(25) @default("Pending")
   tanggalPengajuan DateTime  @db.Timestamp() @default(now())
   tanggalPersetujuan DateTime? @db.Timestamp()
   fileSurat        String?   @db.VarChar(255)
@@ -86,10 +86,10 @@ model SuratTugasMk {
   dataMahasiswa  String    @db.VarChar(255)
   tujuan         String    @db.VarChar(255)
   topik          String    @db.VarChar(255)
-  idPengajuan    Int   @unique 
-  idCourse         String    @db.VarChar(12)
+  idPengajuan    Int       @unique 
+  idCourse       String    @db.VarChar(12)
   
-  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id], onDelete: Cascade)
   course     Course     @relation(fields: [idCourse], references: [id])
 }
 
@@ -102,7 +102,7 @@ model SuratMahasiswaAktif {
   keperluanPengajuan String @db.VarChar(255)
   idPengajuan    Int       @unique 
   
-  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id], onDelete: Cascade)
 }
 
 model SuratKeteranganLulus {
@@ -112,7 +112,7 @@ model SuratKeteranganLulus {
   tanggalLulus   DateTime  @db.Timestamp()
   idPengajuan    Int       @unique 
 
-  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id], onDelete: Cascade)
 }
 
 model LaporanHasilStudi {
@@ -122,5 +122,5 @@ model LaporanHasilStudi {
   keperluanPembuatan String @db.VarChar(255)
   idPengajuan    Int       @unique 
   
-  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id])
+  pengajuanSurat PengajuanSurat @relation(fields: [idPengajuan], references: [id], onDelete: Cascade)
 }

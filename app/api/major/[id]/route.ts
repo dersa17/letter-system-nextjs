@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { majorSchema } from '@/lib/schemas';
+import { majorSchema } from '@/lib/schema.zod';
 import { z } from 'zod';
 
 export async function PUT(

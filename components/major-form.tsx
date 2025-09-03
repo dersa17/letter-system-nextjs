@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { majorSchema } from "@/lib/schemas";
+import { majorSchema } from "@/lib/schema.zod";
 import { Prisma } from "@prisma/client";
 import useMajorStore  from "@/app/stores/major-store";
 const MajorForm = ({

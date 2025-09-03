@@ -12,7 +12,7 @@
   import { z } from "zod";
   import { Input } from "./ui/input";
   import { Button } from "./ui/button";
-  import { courseSchema } from "@/lib/schemas";
+  import { courseSchema } from "@/lib/schema.zod";
   import { Prisma } from "@prisma/client";
   import useCourseStore from "@/app/stores/course-store";
   import useMajorStore from "@/app/stores/major-store";

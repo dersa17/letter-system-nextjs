@@ -16,7 +16,7 @@ const useMajorStore = create<MajorStore>((set) => ({
     majors: [],
     fetchMajors: async () => {
       try {
-        const res = await axios.get('/api/admin/major');
+        const res = await axios.get('/api/major');
         set({ majors: res.data });
       } catch (error) {
         console.error('Failed to fetch majors:', error);
@@ -25,7 +25,7 @@ const useMajorStore = create<MajorStore>((set) => ({
     },
     addMajor: async (data) => {
       try {
-        const res = await axios.post('/api/admin/major', data);
+        const res = await axios.post('/api/major', data);
         set((state) => ({ majors: [...state.majors, res.data] }));
         toast.success('Major successfully created!');
         return res.data;
@@ -40,7 +40,7 @@ const useMajorStore = create<MajorStore>((set) => ({
     },
     updateMajor: async (id, data) => {
       try {
-        const res = await axios.put(`/api/admin/major/${id}`, data);
+        const res = await axios.put(`/api/major/${id}`, data);
         set((state) => ({
           majors: state.majors.map((major) =>
             major.id === id ? { ...major, ...res.data } : major
@@ -59,7 +59,7 @@ const useMajorStore = create<MajorStore>((set) => ({
     },
     deleteMajor: async (id) => {
       try {
-        await axios.delete(`/api/admin/major/${id}`);
+        await axios.delete(`/api/major/${id}`);
         set((state) => ({
           majors: state.majors.filter((major) => major.id !== id),
         }));

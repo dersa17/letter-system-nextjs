@@ -22,6 +22,7 @@ export const authOptions = {
           return {
             id: user.id,
             email: user.email,
+            idMajor: user.idMajor,
             role: user.role, // simpan role name / bisa juga id
           };
         }
@@ -35,6 +36,7 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.majorId = user.idMajor
         token.userId = user.id;
         token.email = user.email;
         token.role = user.role;
@@ -44,6 +46,7 @@ export const authOptions = {
     async session({ session, token }) {
       session.user = {
         id: token.userId as string,
+        idMajor: token.majorId as string,
         email: token.email as string,
         role: token.role as string,
       };

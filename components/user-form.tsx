@@ -13,7 +13,7 @@ import {
 import { z } from "zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { userCreateSchema, userUpdateSchema } from "@/lib/schemas";
+import { userCreateSchema, userUpdateSchema } from "@/lib/schema.zod";
 import { Prisma } from "@prisma/client";
 import useUserStore from "@/app/stores/user-store"
 import useMajorStore from "@/app/stores/major-store";

@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { courseSchema } from '@/lib/schemas';
+import { courseSchema } from '@/lib/schema.zod';
 import { z } from 'zod';
 
 export async function PUT(
@@ -32,7 +32,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string  } }) {
+export async function DELETE({ params }: { params: { id: string  } }) {
   try {
     const { id } = await params;
 
