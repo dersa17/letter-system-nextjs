@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import ButtonSubmitLetter from "./button-submit-letter";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -13,6 +13,7 @@ import useLetterStore from "@/app/stores/letter-store";
 const GraduationCertificateForm = () => {
   const {profile, fetchProfile} = useProfileStore()
   const {addLetter} = useLetterStore()
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   React.useEffect(() => {
     fetchProfile()
   }, [fetchProfile])
@@ -27,10 +28,12 @@ const GraduationCertificateForm = () => {
 
   });
 
-const onSubmit = (data: z.infer<typeof suratKeteranganLulusSchema>) => {
+const onSubmit = async (data: z.infer<typeof suratKeteranganLulusSchema>) => {
+    setIsSubmitting(true)
     console.log("Graduation Certificate Data:", data);
-    addLetter({type: "Keterangan Lulus", payload: data})
+    await addLetter({type: "Keterangan Lulus", payload: data})
     form.reset()
+    setIsSubmitting(false)
   };
 
   return (
@@ -78,7 +81,10 @@ const onSubmit = (data: z.infer<typeof suratKeteranganLulusSchema>) => {
                 )}
               />
               
-              <Button type="submit" className="w-full">Submit Graduation Certificate</Button>
+              <ButtonSubmitLetter type="submit" isLoading={isSubmitting}>
+                            Submit Graduation Certificate Letter
+                </ButtonSubmitLetter>
+              
             </form>
           </Form>
   )

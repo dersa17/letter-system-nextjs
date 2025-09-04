@@ -1,7 +1,6 @@
 "use client"
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,11 +9,13 @@ import { laporanHasilStudiSchema } from "@/lib/schema.zod"
 import useProfileStore from "@/app/stores/profile-store";
 import useLetterStore from "@/app/stores/letter-store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ButtonSubmitLetter from "./button-submit-letter";
 
 
 const StudyResultReportLetterForm = () => {
   const { profile, fetchProfile } = useProfileStore()
   const {addLetter} = useLetterStore()
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   React.useEffect(() => {
     fetchProfile()
   }, [fetchProfile])
@@ -30,10 +31,13 @@ const StudyResultReportLetterForm = () => {
 
   });
 
-  const onSubmit = (data: z.infer<typeof laporanHasilStudiSchema>) => {
+  const onSubmit = async (data: z.infer<typeof laporanHasilStudiSchema>) => {
+    setIsSubmitting(true)
     console.log("Study Result report Letter Data:", data);
-    addLetter({type: "Laporan Hasil Studi", payload: data})
+    await addLetter({type: "Laporan Hasil Studi", payload: data})
     form.reset()
+    setIsSubmitting(false)
+    
   };
 
   return (
@@ -84,7 +88,9 @@ const StudyResultReportLetterForm = () => {
           )}
         />
 
-        <Button onClick={()=> console.log("clicked")} type="submit" className="w-full">Submit Learning Outcome Report</Button>
+        <ButtonSubmitLetter isLoading={isSubmitting} type="submit">
+            Submit Study Result Report Letter
+        </ButtonSubmitLetter>
       </form>
     </Form>
   )

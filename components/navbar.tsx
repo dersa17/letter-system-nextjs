@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,18 +17,18 @@ import { signOut } from "next-auth/react";
 import useProfileStore from "@/app/stores/profile-store";
 
 const Navbar = () => {
-const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-const pathname = usePathname();
-const {profile, fetchProfile} = useProfileStore()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const { profile, fetchProfile } = useProfileStore();
 
-const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   // Fetch profile
-useEffect(() => {
+  useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-const router = useRouter()
+  const router = useRouter();
 
   const navigationItems = [
     { name: "Home", href: "/mahasiswa/home", icon: Home },
@@ -44,7 +44,9 @@ const router = useRouter()
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-foreground">LetterSystem</h1>
+                <h1 className="text-lg font-semibold text-foreground">
+                  LetterSystem
+                </h1>
               </div>
             </div>
           </div>
@@ -61,7 +63,10 @@ const router = useRouter()
                   asChild
                   className="relative"
                 >
-                  <Link href={item.href} className="flex items-center space-x-2">
+                  <Link
+                    href={item.href}
+                    className="flex items-center space-x-2"
+                  >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
                   </Link>
@@ -73,7 +78,11 @@ const router = useRouter()
           {/* Profile Menu Section */}
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative hidden sm:flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="relative hidden sm:flex"
+            >
               <Bell className="h-4 w-4" />
               <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-destructive"></span>
             </Button>
@@ -81,9 +90,12 @@ const router = useRouter()
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                >
                   <Avatar className="h-8 w-8">
-                   <AvatarImage src={profile?.image} alt="Profile" />
+                    <AvatarImage src={profile?.image} alt="Profile" />
                     <AvatarFallback className="bg-brand-primary text-primary-foreground">
                       JD
                     </AvatarFallback>
@@ -100,17 +112,19 @@ const router = useRouter()
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => {
-                router.push("/mahasiswa/profile")
-              }}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                <DropdownMenuItem asChild>
+                  <Link href="/mahasiswa/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem  onClick={async () => {
-                                  await signOut({ redirect: false });
-                                  router.push("/login");
-                                }}>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await signOut({ redirect: false });
+                    router.push("/login");
+                  }}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>
@@ -148,7 +162,10 @@ const router = useRouter()
                     className="w-full justify-start"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Link href={item.href} className="flex items-center space-x-2">
+                    <Link
+                      href={item.href}
+                      className="flex items-center space-x-2"
+                    >
                       <Icon className="h-4 w-4" />
                       <span>{item.name}</span>
                     </Link>

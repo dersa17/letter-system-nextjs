@@ -37,7 +37,19 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
     GET: [4],
     POST: [4],
     DELETE: [4]
-  }
+  },
+  "/api/user": {
+    GET: [1],
+    POST: [1],
+    DELETE: [1],
+    UPDATE: [1]
+  },
+  "/api/major": {
+    GET: [1],
+    POST: [1],
+    DELETE: [1],
+    UPDATE: [1]
+  },
 };
 
 export async function middleware(request: NextRequest) {

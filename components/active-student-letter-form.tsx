@@ -1,7 +1,6 @@
 "use client"
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,9 +9,12 @@ import {suratMahasiswaAktifSchema} from "@/lib/schema.zod"
 import useProfileStore from "@/app/stores/profile-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useLetterStore from "@/app/stores/letter-store";
+import ButtonSubmitLetter from "./button-submit-letter";
 
 const ActiveStudentLetterForm = () => {
   const {profile, fetchProfile} = useProfileStore()
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   const{addLetter} = useLetterStore()
   React.useEffect(() => {
     fetchProfile()
@@ -33,10 +35,12 @@ const ActiveStudentLetterForm = () => {
 
 
 
-const onSubmit = (data: z.infer<typeof suratMahasiswaAktifSchema>) => {
+const onSubmit = async (data: z.infer<typeof suratMahasiswaAktifSchema>) => {
+    setIsSubmitting(true)
     console.log("Active Student Letter Data:", data);
-    addLetter({type: "Mahasiswa Aktif", payload: data})
+    await addLetter({type: "Mahasiswa Aktif", payload: data})
     form.reset()
+    setIsSubmitting(false)
   };
 
   return (
@@ -111,8 +115,11 @@ const onSubmit = (data: z.infer<typeof suratMahasiswaAktifSchema>) => {
                   </FormItem>
                 )}
               />
+
+                <ButtonSubmitLetter type="submit" isLoading={isSubmitting}>
+                           Submit Active Student Letter
+                      </ButtonSubmitLetter>
               
-              <Button type="submit" className="w-full">Submit Active Student Letter</Button>
             </form>
           </Form>
   )

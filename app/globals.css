@@ -121,3 +121,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Di globals.css */
+#nprogress .bar {
+  background: hsl(222.2, 84%, 4.9%) !important; /* Light mode */
+}
+
+.dark #nprogress .bar {
+  background: hsl(210, 40%, 98%) !important; /* Dark mode */
+}

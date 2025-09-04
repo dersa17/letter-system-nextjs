@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import ButtonSubmitLetter from "./button-submit-letter";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import {
   Select,
@@ -22,12 +22,14 @@ const CourseAssignmentLetterForm = () => {
   
   const { courses, fetchCourses } = useCourseStore()
   const {addLetter} = useLetterStore()
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
 
   React.useEffect(() => {
     fetchCourses()
   }, [fetchCourses])
 
+  
   const form = useForm<z.infer<typeof suratTugasMkSchema>>({
     resolver: zodResolver(suratTugasMkSchema),
     defaultValues: {
@@ -42,10 +44,12 @@ const CourseAssignmentLetterForm = () => {
 
   });
 
-  const onSubmit = (data: z.infer<typeof suratTugasMkSchema>) => {
+  const onSubmit = async (data: z.infer<typeof suratTugasMkSchema>) => {
+    setIsSubmitting(true)
     console.log("Course Assignment Letter Data:", data);
-    addLetter({type:"Tugas Mata Kuliah", payload: data})
+    await addLetter({type:"Tugas Mata Kuliah", payload: data})
     form.reset()
+    setIsSubmitting(false)
   };
 
   return (
@@ -149,7 +153,11 @@ const CourseAssignmentLetterForm = () => {
           )}
         />
 
-        <Button type="submit" className="w-full">Submit Course Assignment Letter</Button>
+        <ButtonSubmitLetter type="submit" isLoading={isSubmitting}>
+              Submit Course Assignment Letter
+        </ButtonSubmitLetter>
+
+
       </form>
     </Form>
   )

@@ -25,6 +25,7 @@ import {
 
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 export function NavUser({
@@ -82,12 +83,12 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => {
-                router.push("/profile")
-              }}>
-                <IconUserCircle />
+                 <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center">
+                    <IconUserCircle />
                 Profile
-              </DropdownMenuItem>
+                </Link>
+                </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={async () => {
                   await signOut({ redirect: false });
