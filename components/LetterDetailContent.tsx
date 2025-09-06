@@ -4,6 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Prisma } from "@prisma/client";
+import { handleDownload } from "@/lib/download.letter";
+
+
 
 interface LetterDetailContentProps {
   letter: Prisma.PengajuanSuratGetPayload<{
@@ -13,18 +16,22 @@ interface LetterDetailContentProps {
       suratKeteranganLulus?: true;
       suratMahasiswaAktif?: true;
       user: true;
+      mo: true;
+      kaprodi: true
     };
   }>;
 }
 
 const LetterDetailContent = ({ letter }: LetterDetailContentProps) => {
   console.log(letter);
+
+
   const getStatusBadge = (status: string) => {
     const variants = {
-       Approved: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-    Pending: "bg-amber-100 text-amber-700 border border-amber-200",
-    Rejected: "bg-rose-100 text-rose-700 border border-rose-200",
-    Finished: "bg-indigo-100 text-indigo-700 border border-indigo-200",
+      Approved: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+      Pending: "bg-amber-100 text-amber-700 border border-amber-200",
+      Rejected: "bg-rose-100 text-rose-700 border border-rose-200",
+      Finished: "bg-indigo-100 text-indigo-700 border border-indigo-200",
     };
 
     return (
@@ -286,21 +293,42 @@ const LetterDetailContent = ({ letter }: LetterDetailContentProps) => {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Student ID (NRP)
+                Mahasiswa
               </p>
-              <p className="text-base">{letter.nrp}</p>
+              <p className="text-base">
+                <span className="font-medium">{letter.user.nama}</span>
+                <span className="text-sm text-muted-foreground ml-2">
+                  ({letter.nrp})
+                </span>
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                MO NIK
+                Manager Operasional
               </p>
-              <p className="text-base">{letter.moNik ? letter.moNik : "-"}</p>
+              <p className="text-base">
+                {letter.mo ? <>
+                <span className="font-medium">{letter.mo.nama}</span>
+                <span className="text-sm text-muted-foreground ml-2">
+                  ({letter.moNik})
+                </span>
+                </> : "-"}
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Kaprodi NIK
+                Kepala Program Studi
               </p>
-              <p className="text-base">{letter.kaprodiNik ? letter.kaprodiNik : "-"}</p>
+              <p className="text-base">
+                {letter.kaprodi ? <>
+                   <>
+                <span className="font-medium">{letter.kaprodi.nama}</span>
+                <span className="text-sm text-muted-foreground ml-2">
+                  ({letter.kaprodiNik})
+                </span>
+                </>
+                </> : "-"}
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
@@ -348,7 +376,7 @@ const LetterDetailContent = ({ letter }: LetterDetailContentProps) => {
                 <p className="text-sm font-medium text-muted-foreground">
                   Letter File
                 </p>
-                <Button variant="outline" size="sm" className="mt-2">
+                <Button onClick={() => handleDownload(letter.fileSurat!)} variant="outline" size="sm" className="mt-2">
                   <Download size={16} className="mr-2" />
                   Download Letter
                 </Button>

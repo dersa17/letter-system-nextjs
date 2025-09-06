@@ -34,6 +34,7 @@ import {
 import { CheckCircle, Clock, XCircle, Flag } from "lucide-react";
 import DialogDelete from '@/components/dialog-delete'
 import LetterDetailDrawer from "@/components/LetterDetailDrawer";
+import { handleDownload } from "@/lib/download.letter";
 
 
 const letterTypes = ["Tugas Mata Kuliah", "Keterangan Lulus", "Mahasiswa Aktif", "Laporan Hasil Studi"];
@@ -211,9 +212,10 @@ const Page = () => {
                     <TableCell>{application.tanggalUpload ? format(application.tanggalUpload, "MMM dd, yyyy") : "-"}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        {application.status === "Finished" && application.tanggalUpload && (
+                        <LetterDetailDrawer letter={application} />
+                        {application.status === "Finished" && application.fileSurat && (
                           <Tooltip>
-                            <TooltipTrigger asChild><Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                            <TooltipTrigger asChild><Button onClick={() => handleDownload(application.fileSurat!)} size="sm" variant="outline" className="h-8 w-8 p-0">
                               <Download className="h-4 w-4" />
                             </Button></TooltipTrigger>
                             <TooltipContent>
@@ -223,7 +225,6 @@ const Page = () => {
 
                         )}
 
-                        <LetterDetailDrawer letter={application} />
 
                         {application.status === "Pending" && (
                           <>

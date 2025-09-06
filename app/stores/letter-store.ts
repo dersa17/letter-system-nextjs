@@ -20,6 +20,8 @@ type LetterStore = {
     suratKeteranganLulus?: true;
     suratMahasiswaAktif?: true;
     user: true,
+    mo: true,
+    kaprodi: true
   };
 }>[];
 
@@ -30,8 +32,12 @@ type LetterStore = {
         suratMahasiswaAktif?: true
         suratKeteranganLulus?: true
         user: true,
+        mo: true,
+        kaprodi: true,
     }}> | null>
     deleteLetter: (id: number) => Promise<void>
+    updateStatusLetter: (id: number, status: string) => Promise<void>
+    uploadLetter:(id: number, data: FormData) => Promise<void>
 }
 
 
@@ -73,8 +79,42 @@ const useLetterStore = create<LetterStore>((set) => ({
         } catch(error) {
           const errorMessage =
           axios.isAxiosError(error) ? error.response?.data?.error ?? error.message : 'An unexpected error occurred';
-
+          
           console.error('Failed to delete letter:', errorMessage);
+          toast.error(errorMessage);
+        }
+    },
+    updateStatusLetter: async (id, status) => {
+        try {
+          const res =await axios.patch(`/api/letter/${id}/status`, {status})
+          console.log(res)
+          set((state) => ({
+          letters: state.letters.map((l) =>
+            l.id === id ? res.data : l
+          ),
+        }));
+        toast.success(`Letter Successfully ${status}`);
+        } catch (error) {
+          const errorMessage =
+          axios.isAxiosError(error) ? error.response?.data?.error ?? error.message : 'An unexpected error occurred';
+          console.error(`Failed to ${status} letter:`, errorMessage);
+          toast.error(errorMessage);
+        }
+    },
+    uploadLetter: async (id, file ) => {
+        try {
+          const res =await axios.patch(`/api/letter/${id}/upload`, file)
+          console.log(res)
+          set((state) => ({
+          letters: state.letters.map((l) =>
+            l.id === id ? res.data : l
+          ),
+        }));
+        toast.success(`Letter Successfully uploaded`);
+        } catch (error) {
+          const errorMessage =
+          axios.isAxiosError(error) ? error.response?.data?.error ?? error.message : 'An unexpected error occurred';
+          console.error(`Failed to upload file letter:`, errorMessage);
           toast.error(errorMessage);
         }
     }

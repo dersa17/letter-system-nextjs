@@ -87,11 +87,14 @@ export const courseSchema = z.object({
 })
 
 
+
 export const pengajuanSuratSchema = z.object({
-    fileSurat: z.instanceof(File).refine((file) => file.type === "application/pdf", {
-        message: "Only .pdf format is supported.",
-      }).optional(),
-  });
+  fileSurat: z
+    .instanceof(File)
+    .refine((file) => file.type === "application/pdf", {
+      message: "Only .pdf format is supported.",
+    }),
+});
 
 
 export const suratTugasMkSchema = z.object({

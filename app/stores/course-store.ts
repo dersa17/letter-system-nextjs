@@ -36,8 +36,8 @@ const useCourseStore = create<CourseStore>((set) => ({
           toast.success('Course successfully created!');
           return res.data;
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+               const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to add course:', errorMessage);
           toast.error(errorMessage);
@@ -55,8 +55,8 @@ const useCourseStore = create<CourseStore>((set) => ({
           toast.success('Course successfully updated!');
           return res.data;
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+             const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to update course:', errorMessage);
           toast.error(errorMessage);
@@ -71,8 +71,8 @@ const useCourseStore = create<CourseStore>((set) => ({
           }));
           toast.success('Course successfully deleted!');
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+              const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to delete course:', errorMessage);
           toast.error(errorMessage);

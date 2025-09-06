@@ -31,6 +31,8 @@ export async function GET() {
         suratKeteranganLulus: true,
         suratMahasiswaAktif: true,
         user: true,
+        mo: true,
+        kaprodi: true
       },
       orderBy: {
           tanggalPengajuan: 'asc', // atau 'desc'
@@ -106,6 +108,8 @@ export async function POST(req: NextRequest) {
           suratKeteranganLulus: true,
           suratMahasiswaAktif: true,
           user: true,
+          mo: true,
+          kaprodi: true
         },
       });
     });

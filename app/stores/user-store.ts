@@ -39,8 +39,8 @@ const useUserStore = create<UserStore>((set) => ({
           toast.success('User successfully created!');
           return res.data;
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+              const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to add user:', errorMessage);
           toast.error(errorMessage);
@@ -58,8 +58,8 @@ const useUserStore = create<UserStore>((set) => ({
           toast.success('User successfully updated!');
           return res.data;
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+               const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to update user:', errorMessage);
           toast.error(errorMessage);
@@ -74,8 +74,8 @@ const useUserStore = create<UserStore>((set) => ({
           }));
           toast.success('User successfully deleted!');
         } catch (error) {
-          const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
+            const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to delete user:', errorMessage);
           toast.error(errorMessage);

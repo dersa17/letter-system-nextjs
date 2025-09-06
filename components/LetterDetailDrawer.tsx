@@ -27,6 +27,8 @@ interface LetterDetailDrawerProps {
       suratKeteranganLulus?: true;
       suratMahasiswaAktif?: true;
       user: true;
+      mo: true
+      kaprodi: true
     };
   }>;
 }

@@ -45,10 +45,9 @@ const useProfileStore = create<ProfileStore>((set) => ({
       toast.success('Profile successfully updated!');
       return res.data;
     } catch (error) {
-      const errorMessage =
-        axios.isAxiosError(error) && error.response?.data?.error
-          ? error.response.data.error
-          : 'An unexpected error occurred';
+            const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
+          : 'An unexpected error occurred'
       console.error('Failed to update profile:', errorMessage);
       toast.error(errorMessage);
       return null;

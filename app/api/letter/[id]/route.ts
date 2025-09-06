@@ -12,13 +12,13 @@ export async function DELETE(req: NextRequest, {params} : {params : {id: number}
         await prisma.pengajuanSurat.delete({where: {id: Number(id) }})
 
        
+        
         return NextResponse.json({ message: 'Letter deleted successfully' }, { status: 200 });  
-
-
+        
     } catch (error) {
         
-        console.error('Error deleting course:', error);
-        return NextResponse.json({ error: 'Failed to delete course' }, { status: 500 });
+        console.error('Error deleting leeter:', error);
+        return NextResponse.json({ error: 'Failed to delete letter' }, { status: 500 });
     }
-
+    
 }

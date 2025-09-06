@@ -30,9 +30,9 @@ const useMajorStore = create<MajorStore>((set) => ({
         toast.success('Major successfully created!');
         return res.data;
       } catch (error) {
-        const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-        ? error.response.data.error
-        : 'An unexpected error occurred'
+             const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
+          : 'An unexpected error occurred'
         console.error('Failed to add major:', errorMessage);
         toast.error(errorMessage);
         return null;
@@ -49,9 +49,9 @@ const useMajorStore = create<MajorStore>((set) => ({
         toast.success('Major successfully updated!');
         return res.data;
       } catch (error) {
-        const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-        ? error.response.data.error
-        : 'An unexpected error occurred'
+            const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
+          : 'An unexpected error occurred'
         console.error('Failed to update major:', errorMessage);
         toast.error(errorMessage);
         return null;
@@ -65,9 +65,9 @@ const useMajorStore = create<MajorStore>((set) => ({
         }));
         toast.success('Major successfully deleted!');
       } catch (error) {
-        const errorMessage = axios.isAxiosError(error) && error.response?.data?.error
-        ? error.response.data.error
-        : 'An unexpected error occurred'
+            const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
+          ?? error.message
+          : 'An unexpected error occurred'
         console.error('Failed to delete major:', errorMessage);
         toast.error(errorMessage);
       }

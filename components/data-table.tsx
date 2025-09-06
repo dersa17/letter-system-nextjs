@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -11,15 +11,15 @@ import {
   useSensors,
   type DragEndEvent,
   type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
   arrayMove,
   useSortable,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -28,7 +28,7 @@ import {
   IconChevronsRight,
   IconLayoutColumns,
   IconPlus,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -43,9 +43,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -53,16 +53,16 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -70,17 +70,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-} from "@/components/ui/tabs"
-
-
-function DraggableRow<T extends { id: string | number }>({ row }: { row: Row<T> }) {
+} from "@/components/ui/table";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { DataTableFilter, FilterConfig, dateRangeFilterFn, multiSelectFilterFn } from "@/components/data-table-columns-filter"
+function DraggableRow<T extends { id: string | number }>({
+  row,
+}: {
+  row: Row<T>;
+}) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  })
+  });
 
   return (
     <TableRow
@@ -99,65 +99,67 @@ function DraggableRow<T extends { id: string | number }>({ row }: { row: Row<T> 
         </TableCell>
       ))}
     </TableRow>
-  )
+  );
 }
 
 export function DataTable<T extends { id: string | number }>({
   data: initialData,
   title,
   columns,
-  onOpenDialog
+  onOpenDialog,
+  filterConfig,
 }: {
-  data: T[]
-  title: string | undefined
-  columns: ColumnDef<T>[]
-  onOpenDialog?: (data: T | null) => void
-
+  data: T[];
+  title: string | undefined;
+  columns: ColumnDef<T>[];
+  onOpenDialog?: (data: T | null) => void;
+  filterConfig?: FilterConfig[];
 }) {
-
- 
-
-  // const [isOpenFormDialog, setOpenFormDialog] = React.useState(false)
-  // const [dialogData, setDialogData] = React.useState<T | null>(null);
-
-  // const handleOpenFormDialog = React.useCallback((data: T | null) => {
-  //   setDialogData(data);
-  //   setOpenFormDialog(true);
-  // }, []);
-
-
-  const [data, setData] = React.useState(() => initialData)
+  const [data, setData] = React.useState(() => initialData);
 
   React.useEffect(() => {
-    setData(initialData); // Perbarui state `data` saat `initialData` berubah
+    setData(initialData);
   }, [initialData]);
 
-
- 
-
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
-  const [globalFilter, setGlobalFilter] = React.useState("") //
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  })
-  const sortableId = React.useId()
+  });
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
-  )
+  );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
-  )
+  );
+
+const globalFilterFn = <TData,>(row: Row<TData>, _columnId: string, filterValue: string) => {
+  if (!filterValue) return true;
+
+  const search = String(filterValue).toLowerCase();
+
+  // Cek semua kolom visible
+  return row
+    .getAllCells()
+    .some((cell) => {
+      const value = cell.getValue();
+      if (!value) return false;
+      return String(value).toLowerCase().includes(search);
+    });
+};
+
 
   const table = useReactTable({
     data,
@@ -178,37 +180,54 @@ export function DataTable<T extends { id: string | number }>({
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
+    globalFilterFn: globalFilterFn,
+    filterFns: {
+      dateRange: dateRangeFilterFn,
+      multiSelect: multiSelectFilterFn,
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+    const { active, over } = event;
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
     }
   }
+
   return (
     <Tabs
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
     >
       <div className="flex items-center justify-between px-4 lg:px-6">
-      <Input
-          placeholder="Search all columns..."
-          value={globalFilter}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
-        />
-    
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search"
+            value={globalFilter}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="max-w-sm"
+          />
+          
+          {/* Render filters */}
+          {filterConfig?.map((filter, index) => (
+            <DataTableFilter
+              key={`${filter.column}-${index}`}
+              filter={filter}
+              table={table}
+            />
+          ))}
+        </div>
+
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -239,16 +258,23 @@ export function DataTable<T extends { id: string | number }>({
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm" onClick={() => onOpenDialog?.(null)}>
-          <IconPlus />
-          Add {title}
-        </Button>
+          {onOpenDialog && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenDialog(null)}
+            >
+              <IconPlus />
+              Add {title}
+            </Button>
+          )}
         </div>
       </div>
+
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
@@ -275,7 +301,7 @@ export function DataTable<T extends { id: string | number }>({
                                 header.getContext()
                               )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -304,37 +330,33 @@ export function DataTable<T extends { id: string | number }>({
             </Table>
           </DndContext>
         </div>
+        
         <div className="flex items-center justify-between px-4">
-          {/* <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div> */}
-             <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Rows per page
-              </Label>
-              <Select
-                value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => {
-                  table.setPageSize(Number(value))
-                }}
-              >
-                <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {pageSize}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="hidden items-center gap-2 lg:flex">
+            <Label htmlFor="rows-per-page" className="text-sm font-medium">
+              Rows per page
+            </Label>
+            <Select
+              value={`${table.getState().pagination.pageSize}`}
+              onValueChange={(value) => {
+                table.setPageSize(Number(value));
+              }}
+            >
+              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                <SelectValue
+                  placeholder={table.getState().pagination.pageSize}
+                />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex w-full items-center justify-between gap-8 lg:w-fit px-4">
-         
             <div className="flex w-fit items-center justify-center text-sm font-medium">
               Page {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount()}
@@ -383,6 +405,7 @@ export function DataTable<T extends { id: string | number }>({
           </div>
         </div>
       </TabsContent>
+
       <TabsContent
         value="past-performance"
         className="flex flex-col px-4 lg:px-6"
@@ -399,8 +422,5 @@ export function DataTable<T extends { id: string | number }>({
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
-
-
-
