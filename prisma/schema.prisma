@@ -16,12 +16,15 @@ datasource db {
 model RoleUser {
   id   Int    @id @default(autoincrement())
   nama String @db.VarChar(25)
+
   users User[]
 }
 
 model Major {
   id String @id @db.VarChar(2)
   nama String @db.VarChar(18)
+  createdAt  DateTime @db.Timestamp() @default(now())
+  updatedAt  DateTime @db.Timestamp() @updatedAt @default(now())
   course Course[]
   users    User[]
 }
@@ -53,6 +56,8 @@ model Course {
   nama    String   @db.VarChar(100)
   sks     Int
   idMajor String @db.VarChar(2)
+  createdAt  DateTime @db.Timestamp() @default(now())
+  updatedAt  DateTime @db.Timestamp() @updatedAt @default(now())
   
   major  Major @relation(fields: [idMajor], references: [id])
   suratTugasMk SuratTugasMk[]

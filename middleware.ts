@@ -55,6 +55,9 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
   "/api/role": {
     GET: [1],
   },
+  "/api/dashboard": {
+    GET: [1,2,3,]
+  }
 };
 
 export async function middleware(request: NextRequest) {

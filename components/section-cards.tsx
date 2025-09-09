@@ -6,10 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import useDashboardStore from "@/app/stores/dashboard-store"
 
 
 
-export async function SectionCards({ type }: { type: string }) {
+export function SectionCards({ type }: { type: string }) {
+  const {dataDashboardAdmin, dataDashboardKaprodi, dataDashboardMO} = useDashboardStore()
   let card: { title: string; icon: React.ElementType; total: number }[] = []
 
   if (type === "admin") {
@@ -17,19 +19,19 @@ export async function SectionCards({ type }: { type: string }) {
       {
         title: "Course",
         icon: IconBook,
-        total: await getMataKuliahCount(),
+        total: dataDashboardAdmin?.amountOfCourse ?? 0,
     
       },
       {
         title: "Major",
         icon: IconSchool,
-        total: await getJurusanCount(),
+        total: dataDashboardAdmin?.amountOfMajor ?? 0,
     
       },
       {
         title: "User",
         icon: IconUser,
-        total: await getUserCount(),
+        total: dataDashboardAdmin?.amountOfUser ?? 0
     
       },
     ]
@@ -38,19 +40,19 @@ export async function SectionCards({ type }: { type: string }) {
       {
         title: "Letters",
         icon: IconFile,
-        total: await getUserCount(),
+        total: dataDashboardMO?.amountOfLetter ?? 0
     
       },
       {
         title: "Letters Ready to Upload ",
         icon: IconFileUpload,
-        total: await getUserCount(),
+        total: dataDashboardMO?.amountOfLetterReadyUpload ?? 0
     
       },
       {
         title: "Letters Uploaded",
         icon: IconFileDownload,
-        total: await getUserCount(),
+        total: dataDashboardMO?.amountOfUploaded ?? 0
     
       },
     ]
@@ -59,17 +61,17 @@ export async function SectionCards({ type }: { type: string }) {
       {
         title: "Letters Pending Approval",
         icon: IconFileTime,
-        total: await getUserCount(),
+        total: dataDashboardKaprodi?.amountOfLetterPending ?? 0,
       },
       {
         title: "Letters Approved",
         icon: IconFileCheck,
-        total: await getUserCount(),
+        total: dataDashboardKaprodi?.amountOfLetterApproved ?? 0,
       },
       {
-        title: "Letters Not Approved",
+        title: "Letters Rejected",
         icon: IconFileX,
-        total: await getUserCount(),
+        total: dataDashboardKaprodi?.amountOfLetterRejected ?? 0,
       },
     ]
   }
