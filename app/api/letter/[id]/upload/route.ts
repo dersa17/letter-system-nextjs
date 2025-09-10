@@ -47,6 +47,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: number
       },
     })
 
+    await prisma.notification.create({data: {
+            idPengajuan: updated.id,
+            userId: updated.user.id,
+            type: `Pengajuan Surat Selesai `,
+            message: `Pengajuan surat "${updated?.jenisSurat}" (ID: ${updated?.id}) telah diupload oleh ${updated?.mo?.nama}.`,
+            isRead: false
+    }})
+
     return NextResponse.json(updated, { status: 200 })
   } catch (error) {
     console.error("Error upload status:", error)

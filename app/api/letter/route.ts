@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
       }
 
       // 3. ambil pengajuanSurat beserta relasi
-      return tx.pengajuanSurat.findUnique({
+        const pengajuanSurat2 = await tx.pengajuanSurat.findUnique({
         where: { id: pengajuanSurat.id },
         include: {
           laporanHasilStudi: true,
@@ -112,6 +112,18 @@ export async function POST(req: NextRequest) {
           kaprodi: true
         },
       });
+
+      const kaprodi =  await tx.user.findFirst({where:{idRole: 3, status: "Aktif", idMajor: session?.user?.idMajor}})
+
+      await  tx.notification.create({data: {
+        idPengajuan: pengajuanSurat.id,
+        userId: kaprodi.id,
+        type: "Pengajuan Surat",
+        message: `Pengajuan surat "${pengajuanSurat2?.jenisSurat}" (ID: ${pengajuanSurat2?.id}) telah diajukan oleh ${pengajuanSurat2?.user.nama}.`,
+        isRead: false
+      }})
+
+      return pengajuanSurat2
     });
 
     return NextResponse.json(result, { status: 201 });

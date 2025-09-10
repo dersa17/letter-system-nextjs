@@ -12,13 +12,7 @@ type ProfileStore = {
   }> | null;
   isLoading: boolean;
   fetchProfile: () => Promise<void>;
-  updateProfile: (data: FormData) => Promise<
-    Prisma.UserGetPayload<{
-      include: {
-        role: true;
-        major: true;
-      };
-    }> | null
+  updateProfile: (data: FormData) => Promise<void
   >;
 };
 
@@ -50,7 +44,6 @@ const useProfileStore = create<ProfileStore>((set) => ({
           : 'An unexpected error occurred'
       console.error('Failed to update profile:', errorMessage);
       toast.error(errorMessage);
-      return null;
     } finally {
       set({ isLoading: false });
     }

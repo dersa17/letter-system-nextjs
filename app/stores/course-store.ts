@@ -9,12 +9,8 @@ type CourseStore = {
       major: true
     }}>[]
     fetchCourses: () => Promise<void>
-    addCourse: (data: Prisma.CourseGetPayload<object>) => Promise<Prisma.CourseGetPayload<{include: {
-      major: true
-    }}> | null>
-    updateCourse: (id: string | number, data: Prisma.CourseGetPayload<object>) => Promise<Prisma.CourseGetPayload<{include: {
-      major: true
-    }}> | null>;
+    addCourse: (data: Prisma.CourseGetPayload<object>) => Promise<void>
+    updateCourse: (id: string | number, data: Prisma.CourseGetPayload<object>) => Promise<void>;
     deleteCourse: (id: string | number) => Promise<void>;
 }
 
@@ -34,14 +30,12 @@ const useCourseStore = create<CourseStore>((set) => ({
           const res = await axios.post('/api/course', data);
           set((state) => ({ courses: [...state.courses, res.data] }));
           toast.success('Course successfully created!');
-          return res.data;
         } catch (error) {
                const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
           ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to add course:', errorMessage);
           toast.error(errorMessage);
-          return null;
         }
       },
       updateCourse: async (id, data) => {
@@ -52,15 +46,13 @@ const useCourseStore = create<CourseStore>((set) => ({
               course.id === id ? { ...course, ...res.data } : course
             ),
           }));
-          toast.success('Course successfully updated!');
-          return res.data;
+          toast.success('Course successfully updated!')
         } catch (error) {
              const errorMessage = axios.isAxiosError(error) ? error.response?.data?.error
           ?? error.message
           : 'An unexpected error occurred'
           console.error('Failed to update course:', errorMessage);
-          toast.error(errorMessage);
-          return null;
+          toast.error(errorMessage)
         }
       },
       deleteCourse: async (id) => {

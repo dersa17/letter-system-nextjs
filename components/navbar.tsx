@@ -15,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import useProfileStore from "@/app/stores/profile-store";
+import { NotificationDropdown } from "./notification-dropdown";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -77,15 +78,7 @@ const Navbar = () => {
 
           {/* Profile Menu Section */}
           <div className="flex items-center space-x-4">
-            {/* Notifications */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative hidden sm:flex"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-destructive"></span>
-            </Button>
+            <NotificationDropdown/>
 
             {/* Profile Dropdown */}
             <DropdownMenu>

@@ -4,7 +4,7 @@ import { profileUpdateSchema } from "@/lib/schema.zod";
 import { z } from "zod";
 import { put } from "@vercel/blob";
 import bcrypt from "bcryptjs";
-import { auth } from "@/lib/auth"; // auth dari export NextAuth(authOptions)
+import { auth } from "@/lib/auth"; 
 
 
 export async function GET() {

@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import useProfileStore from "@/app/stores/profile-store"
+import { NotificationDropdown } from "./notification-dropdown"
 
 const data = {
   user: {
@@ -111,14 +112,7 @@ export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem className="flex items-center justify-between gap-2">
             <span className="text-xl font-semibold !p-1.5">{session?.user?.role?.nama}</span>
             {session?.user?.role.id !== 1 && (
-              <Button
-                size="icon"
-                className="size-8 group-data-[collapsible=icon]:opacity-0"
-                variant="outline"
-              >
-                <IconMail />
-                <span className="sr-only">Inbox</span>
-              </Button>
+                <NotificationDropdown/>
             )}
           </SidebarMenuItem>
         </SidebarMenu>

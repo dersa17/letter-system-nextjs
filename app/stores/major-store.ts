@@ -7,8 +7,8 @@ import { Prisma } from '@prisma/client';
 type MajorStore = {
     majors: Prisma.MajorGetPayload<object>[]
     fetchMajors: () => Promise<void>
-    addMajor: (data: Prisma.MajorGetPayload<object>) => Promise<Prisma.MajorGetPayload<object> | null>
-    updateMajor: (id: string | number, data: Prisma.MajorGetPayload<object>) => Promise<Prisma.MajorGetPayload<object> | null>;
+    addMajor: (data: Prisma.MajorGetPayload<object>) => Promise<void>
+    updateMajor: (id: string | number, data: Prisma.MajorGetPayload<object>) => Promise<void>;
     deleteMajor: (id: string | number) => Promise<void>;
 }
 
@@ -35,7 +35,6 @@ const useMajorStore = create<MajorStore>((set) => ({
           : 'An unexpected error occurred'
         console.error('Failed to add major:', errorMessage);
         toast.error(errorMessage);
-        return null;
       }
     },
     updateMajor: async (id, data) => {
@@ -54,7 +53,6 @@ const useMajorStore = create<MajorStore>((set) => ({
           : 'An unexpected error occurred'
         console.error('Failed to update major:', errorMessage);
         toast.error(errorMessage);
-        return null;
       }
     },
     deleteMajor: async (id) => {

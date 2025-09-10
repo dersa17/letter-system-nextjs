@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+
 const roleRedirectMap: Record<number, string> = {
   1: "/admin/dashboard",
   2: "/mo/dashboard",
@@ -57,6 +58,10 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
   },
   "/api/dashboard": {
     GET: [1,2,3,]
+  },
+  "/api/notification": {
+    GET: [1,2,3,4],
+    PATCH: [1,2,3,4]
   }
 };
 

@@ -12,21 +12,35 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!credentials?.id || !credentials?.password) {
+          throw new Error("Invalid username or password");
+        }
+
         const user = await prisma.user.findUnique({
-          where: { id: credentials?.id as string },
+          where: { id: credentials.id },
           include: { role: true }, // cukup ambil role
         });
 
-        if (user && await bcrypt.compare(credentials.password as string, user.password)) {
-          // Hanya return data minimal
-          return {
-            id: user.id,
-            email: user.email,
-            idMajor: user.idMajor,
-            role: user.role, // simpan role name / bisa juga id
-          };
+        if (!user) {
+          throw new Error("Invalid username or password");
         }
-        return null;
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid username or password");
+        }
+
+        // Hanya return data minimal
+        return {
+          id: user.id,
+          email: user.email,
+          idMajor: user.idMajor,
+          role: user.role, // simpan role name / bisa juga id
+        };
       },
     }),
   ],
@@ -36,7 +50,7 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.majorId = user.idMajor
+        token.majorId = user.idMajor;
         token.userId = user.id;
         token.email = user.email;
         token.role = user.role;

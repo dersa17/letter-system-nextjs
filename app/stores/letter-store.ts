@@ -26,15 +26,7 @@ type LetterStore = {
 }>[];
 
     fetchLetters: () => Promise<void>
-    addLetter: (data: LetterInput) => Promise<Prisma.PengajuanSuratGetPayload<{include: {
-        laporanHasilStudi?: true
-        suratTugasMk?: {include: {course: true}}
-        suratMahasiswaAktif?: true
-        suratKeteranganLulus?: true
-        user: true,
-        mo: true,
-        kaprodi: true,
-    }}> | null>
+    addLetter: (data: LetterInput) => Promise<void>
     deleteLetter: (id: number) => Promise<void>
     updateStatusLetter: (id: number, status: string) => Promise<void>
     uploadLetter:(id: number, data: FormData) => Promise<void>
@@ -65,7 +57,6 @@ const useLetterStore = create<LetterStore>((set) => ({
           : 'An unexpected error occurred'
           console.error('Failed to add letter:', errorMessage);
           toast.error(errorMessage);
-          return null;
         }
     },
     deleteLetter: async (id) => {
