@@ -8,7 +8,7 @@ import { put } from "@vercel/blob"
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: number }> }) {
   try {
     const session = await auth()
-    const { id } = params
+    const { id } = await params
 
     const formData = await req.formData()
     const fileSuratRaw = formData.get("fileSurat")
