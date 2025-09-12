@@ -54,9 +54,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   };
 
   // ⏳ Optional: Loading state saat cek session
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
+  // if (status === "loading") {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <form

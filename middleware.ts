@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth"; // Import auth function
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
-
+import type { NextRequest } from "next/server";
 
 const roleRedirectMap: Record<number, string> = {
   1: "/admin/dashboard",
@@ -25,8 +25,7 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
   "/api/notification": { GET: [1, 2, 3, 4], PATCH: [1, 2, 3, 4] },
 };
 
-// Gunakan auth() sebagai middleware
-export default auth(async function middleware(request) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Bypass middleware untuk halaman login dan auth API
@@ -34,34 +33,25 @@ export default auth(async function middleware(request) {
     return NextResponse.next();
   }
 
-  // Session data tersedia di request.auth
-  const session = request.auth;
-  
-  console.log("SESSION:", !!session);
-  console.log("USER:", session?.user ? {
-    id: session.user.id,
-    email: session.user.email,
-    role: session.user.role
-  } : null);
-  console.log("SECRET:", !!process.env.NEXTAUTH_SECRET);
-  console.log("Cookies:", request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value })));
+  // Ambil token next-auth dari cookie
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+
+  console.log("TOKEN:", token);
+  console.log("SECRET:", process.env.NEXTAUTH_SECRET);
+  console.log("Cookies:", request.cookies.getAll());
 
   // Kalau belum login, redirect ke login page
-  if (!session?.user) {
-    console.log("No session found, redirecting to login");
+  if (!token?.sub) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const method = request.method;
-  const role = session.user.role?.id;
-
-  console.log("User role ID:", role);
+  const role = token.role?.id;
 
   // Jika mengakses root '/', redirect ke dashboard sesuai role
   if (pathname === "/" || pathname.startsWith("/login")) {
     const redirectPath = roleRedirectMap[role];
     if (redirectPath) {
-      console.log("Redirecting to:", redirectPath);
       return NextResponse.redirect(new URL(redirectPath, request.url));
     }
   }
@@ -69,56 +59,32 @@ export default auth(async function middleware(request) {
   // Cek akses role berdasarkan path dan method
   if (pathname.startsWith("/api")) {
     // API: cek role + method
-    const pathEntry = Object.entries(pathMethodAccess)
-      .find(([path]) => pathname.startsWith(path));
-    
-    const allowedRoles = pathEntry?.[1][method] || [];
-    
-    console.log("API Access Check:", {
-      path: pathname,
-      method,
-      userRole: role,
-      allowedRoles,
-      hasAccess: allowedRoles.includes(role)
-    });
-    
+    const allowedRoles = Object.entries(pathMethodAccess)
+      .find(([path]) => pathname.startsWith(path))?.[1][method] || [];
     if (!allowedRoles.includes(role)) {
-      console.log("API Access denied");
       return new NextResponse("Forbidden", { status: 403 });
     }
   } else {
     // Halaman: cek role untuk GET saja
-    const pathEntry = Object.entries(pathMethodAccess)
-      .find(([path]) => pathname.startsWith(path));
-    
-    const allowedRoles = pathEntry?.[1].GET || [];
-    
-    console.log("Page Access Check:", {
-      path: pathname,
-      userRole: role,
-      allowedRoles,
-      hasAccess: allowedRoles.includes(role)
-    });
-    
+    const allowedRoles = Object.entries(pathMethodAccess)
+      .find(([path]) => pathname.startsWith(path))?.[1].GET || [];
     if (!allowedRoles.includes(role)) {
-      console.log("Page Access denied");
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
 
-  console.log("Access granted, continuing...");
   // Lanjutkan request normal
   return NextResponse.next();
-});
+}
 
 // Matcher semua route yang butuh middleware
 export const config = {
   matcher: [
     "/",
-    "/admin/:path*",
-    "/mo/:path*",
-    "/kaprodi/:path*",
-    "/mahasiswa/:path*",
+    "/admin/:path",
+    "/mo/:path",
+    "/kaprodi/:path",
+    "/mahasiswa/:path",
     "/api/:path*",
     "/profile",
   ],
