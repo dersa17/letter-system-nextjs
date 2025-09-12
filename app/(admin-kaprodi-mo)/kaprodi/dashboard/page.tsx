@@ -11,12 +11,12 @@ import useDashboardStore from "@/app/stores/dashboard-store";
 
 const Page = () => {
 
-    const {data, fetchCourses} = useDashboardStore()
+    const {fetchCourses} = useDashboardStore()
 
     React.useEffect(() => {
       fetchCourses("kaprodi")
     },[fetchCourses])
-    console.log(data)
+
 
   return (
     <SidebarInset>
