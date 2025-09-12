@@ -36,11 +36,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Ambil token next-auth dari cookie
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req: request, secret: "secureRandomSecret" });
  ;
 
   console.log("TOKEN:", token);
-  console.log("SECRET:", process.env.NEXTAUTH_SECRET);
+  console.log("TOKEN SUB:", token?.sub);
   console.log("Cookies:", request.cookies.getAll());
 
 
