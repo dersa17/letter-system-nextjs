@@ -5,7 +5,7 @@ import { pengajuanSuratSchema } from "@/lib/schema.zod"
 import { put } from "@vercel/blob"
 
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: number } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: number }> }) {
   try {
     const session = await auth()
     const { id } = params

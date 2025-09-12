@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth"
 
 
 
-export async function PATCH(req: NextRequest, {params} : {params: {id: number}}) {
+export async function PATCH(req: NextRequest, {params} : {params: Promise<{id: number}>}) {
     try {
         const session = await auth()
         const {id} = await params
