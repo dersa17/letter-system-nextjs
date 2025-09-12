@@ -6,6 +6,7 @@ declare module "next-auth" {
     email: string;
     idMajor?: string;
     role?: Prisma.RoleGetPayload<object>;
+    emailVerified: Date | null;
   }
   
   interface Session {
@@ -14,6 +15,7 @@ declare module "next-auth" {
       email: string;
       idMajor?: string;
       role?: Prisma.RoleGetPayload<object>;
+      emailVerified: Date | null;
     };
   }
 }
@@ -24,5 +26,6 @@ declare module "next-auth/jwt" {
     email: string;
     majorId?: string;
     role?: Prisma.RoleGetPayload<object>;
+    emailVerified: Date | null;
   }
 }

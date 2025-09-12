@@ -40,6 +40,7 @@ export const authOptions: NextAuthConfig = {
           email: user.email,
           idMajor: user.idMajor || undefined,
           role: user.role,
+          emailVerified: null
         };
       },
     }),
@@ -54,6 +55,7 @@ export const authOptions: NextAuthConfig = {
         token.userId = user.id;
         token.role = user.role;
         token.email = user.email;
+        token.emailVerified = user.emailVerified;
       }
       return token;
     },
@@ -64,6 +66,7 @@ export const authOptions: NextAuthConfig = {
           idMajor: token.majorId,
           email: token.email as string,
           role: token.role,
+          emailVerified: token.emailVerified as Date | null,
         };
       }
       return session;
