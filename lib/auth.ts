@@ -117,7 +117,7 @@ export const authOptions: NextAuthConfig = {
       if (token) {
         session.user = {
           id: token.userId as string,
-          idMajor: token.majorId,
+          idMajor: token.majorId as string ,
           email: token.email as string,
           role: token.role,
           emailVerified: token.emailVerified as Date | null,
