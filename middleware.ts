@@ -113,12 +113,6 @@ export async function middleware(request: NextRequest) {
 // Matcher untuk semua halaman + API
 export const config = {
   matcher: [
-    "/",
-    "/admin/:path*",
-    "/mo/:path*",
-    "/kaprodi/:path*",
-    "/mahasiswa/:path*",
-    "/api/:path*",
-    "/profile"
+
   ],
 };
