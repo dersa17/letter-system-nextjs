@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useState} from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -14,34 +14,29 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const {  status } = useSession();
   const router = useRouter();
 
-  // Redirect otomatis setelah login sukses
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/"); // middleware akan redirect ke dashboard sesuai role
-    }
-  }, [status, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setIsLoading(true);
 
-    const res = await signIn("credentials", {
-      redirect: false, // jangan biarkan next-auth redirect otomatis
-      id,
-      password,
-    });
+  const res = await signIn("credentials", {
+    redirect: false,
+    id,
+    password,
+    callbackUrl: "/",
+  });
 
-    setIsLoading(false);
+  setIsLoading(false);
 
-    if (res?.error) {
-      setError("ID atau password salah.");
-    }
-  };
+  if (res?.error) {
+    setError("ID atau password salah.");
+  } else if (res?.url) {
+    router.replace(res.url);
+  }
+};
 
   return (
     <form

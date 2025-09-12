@@ -28,11 +28,11 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   console.log("MIDDLEWARE pathname:", pathname);
-  console.log('Cookies:', request.cookies.getAll());
+  // console.log('Cookies:', request.cookies.getAll());
 
 
   // Bypass middleware untuk halaman login dan auth API
-  if (pathname === "/login" || pathname.startsWith("/api/auth")) {
+  if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
   const role = token.role?.id;
 
   // Jika mengakses root '/', redirect ke dashboard sesuai role
-  if (pathname === "/") {
+  if (pathname === "/" || pathname.startsWith("/login")) {
     const redirectPath = roleRedirectMap[role];
     if (redirectPath) {
       return NextResponse.redirect(new URL(redirectPath, request.url));
