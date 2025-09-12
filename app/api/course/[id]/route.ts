@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 export async function PUT(
     req: NextRequest, 
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -14,7 +14,7 @@ export async function PUT(
     const validatedData = courseSchema.parse(data);
 
     const updatedData = await prisma.course.update({
-      where: { id },
+      where: { id: id },
       data: validatedData,
       include: {
         major: true
