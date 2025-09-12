@@ -1,26 +1,28 @@
-// types/next-auth.d.ts
-import "next-auth";
 import { Prisma } from "@prisma/client";
 
 declare module "next-auth" {
+  interface User {
+    id: string;
+    email: string;
+    idMajor?: string;
+    role?: Prisma.RoleGetPayload<object>;
+  }
+  
   interface Session {
     user: {
       id: string;
-      idMajor?: string;
       email: string;
-      role?: Prisma.RoleUserGetPayload;
+      idMajor?: string;
+      role?: Prisma.RoleGetPayload<object>;
     };
   }
+}
 
-  interface User {
-    idMajor?: string;
-    role?: Prisma.RoleUserGetPayload;
-  }
-
+declare module "next-auth/jwt" {
   interface JWT {
+    userId: string;
+    email: string;
     majorId?: string;
-    userId?: string;
-    email?: string;
-    role?: Prisma.RoleUserGetPayload;
+    role?: Prisma.RoleGetPayload<object>;
   }
 }

@@ -25,7 +25,7 @@ export const NotificationDropdown = () => {
 
   useEffect(() => {
     fetchNotification()
-  },[])
+  }, [fetchNotification])
 
 
   return (

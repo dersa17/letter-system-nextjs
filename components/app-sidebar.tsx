@@ -7,7 +7,6 @@ import {
   IconDashboard,
   IconFile,
 } from "@tabler/icons-react"
-import { Prisma } from "@prisma/client"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import useProfileStore from "@/app/stores/profile-store"
 import { NotificationDropdown } from "./notification-dropdown"
+import { Session } from "next-auth";
 
 const menuAdmin = [
   {title: "Dashboard", url: "/admin/dashboard", icon: IconDashboard },
@@ -36,15 +36,7 @@ const menuMo = [
   { title: "Letter", url: "/mo/letter", icon: IconFile },
 ]
 
-type User = Prisma.UserGetPayload<{include:{
-  role: true
-  major: true
-}}> & {
-  emailVerified: Date | null; // Menambahkan properti emailVerified
-};
-interface Session {
-    user: User; 
-  }
+
 
 type MenuItem = {
   title: string;
@@ -66,7 +58,7 @@ export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     const fetchSession = async () => {
       const sess = await getSession();
-      setSession(sess as Session);
+      setSession(sess);
 
       if (sess?.user?.role.id === 1) setMenu(menuAdmin);
       else if (sess?.user?.role.id === 2) setMenu(menuMo);
@@ -101,7 +93,9 @@ export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center justify-between gap-2">
-            <span className="text-xl font-semibold !p-1.5">{session?.user?.role?.nama}</span>
+            <span className="text-xl font-semibold !p-1.5">
+              {session?.user?.role?.nama ?? ""}
+            </span>
             {session?.user?.role.id !== 1 && (
                 <NotificationDropdown/>
             )}

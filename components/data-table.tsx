@@ -180,8 +180,8 @@ const globalFilterFn = <TData,>(row: Row<TData>, _columnId: string, filterValue:
     onPaginationChange: setPagination,
     globalFilterFn: globalFilterFn,
     filterFns: {
-      dateRange: dateRangeFilterFn,
       multiSelect: multiSelectFilterFn,
+      dateRange: dateRangeFilterFn,
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

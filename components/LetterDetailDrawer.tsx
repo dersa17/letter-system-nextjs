@@ -19,19 +19,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface LetterDetailDrawerProps {
+export type LetterDetailDrawerProps = {
   letter: Prisma.PengajuanSuratGetPayload<{
     include: {
       laporanHasilStudi?: true;
       suratTugasMk?: { include: { course: true } };
-      suratKeteranganLulus?: true;
       suratMahasiswaAktif?: true;
+      suratKeteranganLulus?: true;
       user: true;
-      mo: true
-      kaprodi: true
+      mo?: true; // <-- tambahkan ? di sini
+      kaprodi?: true; // <-- tambahkan ? di sini
     };
   }>;
-}
+};
+
 
 const LetterDetailDrawer = ({ letter }: LetterDetailDrawerProps) => {
   const [open, setOpen] = useState(false);

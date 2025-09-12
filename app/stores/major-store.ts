@@ -2,13 +2,15 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Prisma } from '@prisma/client';
+import z from 'zod';
+import { majorSchema } from '@/lib/schema.zod';
 
 
 type MajorStore = {
     majors: Prisma.MajorGetPayload<object>[]
     fetchMajors: () => Promise<void>
-    addMajor: (data: Prisma.MajorGetPayload<object>) => Promise<void>
-    updateMajor: (id: string | number, data: Prisma.MajorGetPayload<object>) => Promise<void>;
+    addMajor: (data: z.infer<typeof majorSchema>) => Promise<void>
+    updateMajor: (id: string | number, data: z.infer<typeof majorSchema>) => Promise<void>;
     deleteMajor: (id: string | number) => Promise<void>;
 }
 

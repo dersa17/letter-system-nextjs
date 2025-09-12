@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "./prisma";
+import type { NextAuthConfig } from "next-auth";
 
-export const authOptions = {
+export const authOptions: NextAuthConfig = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -17,8 +18,8 @@ export const authOptions = {
         }
 
         const user = await prisma.user.findUnique({
-          where: { id: credentials.id },
-          include: { role: true }, // cukup ambil role
+          where: { id: credentials.id as string },
+          include: { role: true },
         });
 
         if (!user) {
@@ -34,12 +35,11 @@ export const authOptions = {
           throw new Error("Invalid username or password");
         }
 
-        // Hanya return data minimal
         return {
           id: user.id,
           email: user.email,
-          idMajor: user.idMajor,
-          role: user.role, // simpan role name / bisa juga id
+          idMajor: user.idMajor ?? undefined,
+          role: user.role,
         };
       },
     }),
@@ -52,18 +52,19 @@ export const authOptions = {
       if (user) {
         token.majorId = user.idMajor;
         token.userId = user.id;
-        token.email = user.email;
         token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        id: token.userId as string,
-        idMajor: token.majorId as string,
-        email: token.email as string,
-        role: token.role as string,
-      };
+      if (token) {
+        session.user = {
+          id: token.userId as string,
+          idMajor: token.majorId,
+          email: token.email as string,
+          role: token.role,
+        };
+      }
       return session;
     },
   },

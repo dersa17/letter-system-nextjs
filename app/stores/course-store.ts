@@ -2,15 +2,16 @@ import {create} from 'zustand'
 import axios from 'axios'
 import {toast} from 'sonner'
 import { Prisma } from '@prisma/client'
-
+import z from 'zod'
+import { courseSchema } from '@/lib/schema.zod'
 
 type CourseStore = {
     courses: Prisma.CourseGetPayload<{include: {
       major: true
     }}>[]
     fetchCourses: () => Promise<void>
-    addCourse: (data: Prisma.CourseGetPayload<object>) => Promise<void>
-    updateCourse: (id: string | number, data: Prisma.CourseGetPayload<object>) => Promise<void>;
+    addCourse: (data: z.infer<typeof courseSchema>) => Promise<void>
+    updateCourse: (id: string | number, data: z.infer<typeof courseSchema>) => Promise<void>;
     deleteCourse: (id: string | number) => Promise<void>;
 }
 

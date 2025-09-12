@@ -82,7 +82,7 @@ export const majorSchema = z.object({
 export const courseSchema = z.object({
     id: z.string().max(12).nonempty(),
     nama: z.string().max(100).nonempty(),
-    sks: z.preprocess((val) => Number(val), z.number().int().positive()),
+    sks: z.number().min(1),
     idMajor: z.string().max(2).nonempty()
 })
 

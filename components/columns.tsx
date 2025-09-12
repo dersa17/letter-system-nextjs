@@ -1,5 +1,10 @@
 import { Prisma } from "@prisma/client";
 import {
+  multiSelectFilterFn,
+  dateRangeFilterFn,
+} from "@/components/data-table-columns-filter"; // Pastikan path-nya sesuai file kamu
+
+import {
   IconCircleCheckFilled,
   IconCircleXFilled,
   IconClockFilled,
@@ -276,60 +281,53 @@ export const kaprodiLetterColumns = (
     accessorKey: "user.nama",
     header: "Name",
     enableGlobalFilter: true,
-    cell: ({ row }) => {
-      return row.original.user.nama;
-    },
+    cell: ({ row }) => row.original.user.nama,
   },
   {
     accessorKey: "jenisSurat",
     header: "Letter Type",
-    enableColumnFilter: true, // Enable untuk column filter
-    filterFn: "multiSelect", // Gunakan custom filter function
-    cell: ({ row }) => {
-      return row.original.jenisSurat;
-    },
+    enableColumnFilter: true,
+    filterFn: multiSelectFilterFn, // ✅ Ganti string
+    cell: ({ row }) => row.original.jenisSurat,
   },
   {
     accessorKey: "status",
     header: "Status",
     enableColumnFilter: true,
-    filterFn: "multiSelect",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="px-1.5 flex items-center gap-1">
-          {row.original.status === "Approved" ? (
-            <>
-              <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-              Approved
-            </>
-          ) : row.original.status === "Rejected" ? (
-            <>
-              <IconCircleXFilled className="fill-red-500 dark:fill-red-400" />
-              Rejected
-            </>
-          ) : row.original.status === "Finished" ? (
-            <>
-              <IconFlagFilled className="fill-blue-500 dark:fill-blue-400" />
-              Finished
-            </>
-          ) : row.original.status === "Pending" ? (
-            <>
-              <IconClockFilled className="fill-yellow-500 dark:fill-yellow-400" />
-              Pending
-            </>
-          ) : (
-            row.original.status
-          )}
-        </Badge>
-      );
-    },
+    filterFn: multiSelectFilterFn, // ✅ Ganti string
+    cell: ({ row }) => (
+      <Badge variant="outline" className="px-1.5 flex items-center gap-1">
+        {row.original.status === "Approved" ? (
+          <>
+            <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+            Approved
+          </>
+        ) : row.original.status === "Rejected" ? (
+          <>
+            <IconCircleXFilled className="fill-red-500 dark:fill-red-400" />
+            Rejected
+          </>
+        ) : row.original.status === "Finished" ? (
+          <>
+            <IconFlagFilled className="fill-blue-500 dark:fill-blue-400" />
+            Finished
+          </>
+        ) : row.original.status === "Pending" ? (
+          <>
+            <IconClockFilled className="fill-yellow-500 dark:fill-yellow-400" />
+            Pending
+          </>
+        ) : (
+          row.original.status
+        )}
+      </Badge>
+    ),
   },
-
   {
     accessorKey: "tanggalPengajuan",
     header: "Submission Date",
     enableColumnFilter: true,
-    filterFn: "dateRange", // Gunakan date range filter
+    filterFn: dateRangeFilterFn, // ✅ Ganti string
     cell: ({ row }) => {
       return row.original.tanggalPengajuan
         ? format(new Date(row.original.tanggalPengajuan), "MMM dd, yyyy")
@@ -359,7 +357,18 @@ export const kaprodiLetterColumns = (
     id: "actions",
     cell: ({ row }) => (
       <div className="flex justify-start items-center gap-2">
-        <LetterDetailDrawer letter={row.original} />
+       <LetterDetailDrawer letter={row.original as Prisma.PengajuanSuratGetPayload<{
+  include: {
+    laporanHasilStudi?: true;
+    suratTugasMk?: { include: { course: true } };
+    suratMahasiswaAktif?: true;
+    suratKeteranganLulus?: true;
+    user: true;
+    mo?: true;
+    kaprodi?: true;
+  };
+}>} />
+  
         {row.original.status === "Pending" && (
           <>
             <Tooltip>
@@ -370,7 +379,7 @@ export const kaprodiLetterColumns = (
                   variant="outline"
                   className="h-8 w-8 p-0"
                 >
-                  <Check className="h-4 w-4"></Check>
+                  <Check className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -385,7 +394,7 @@ export const kaprodiLetterColumns = (
                   variant="outline"
                   className="h-8 w-8 p-0"
                 >
-                  <X className="h-4 w-4"></X>
+                  <X className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -398,7 +407,7 @@ export const kaprodiLetterColumns = (
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                <Download className="h-4 w-4"></Download>
+                <Download className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -423,6 +432,8 @@ export const moLetterColumns = (
       suratMahasiswaAktif?: true;
       suratKeteranganLulus?: true;
       user: true;
+      mo: true;
+      kaprodi: true;
     };
   }>
 >[] => [
@@ -436,83 +447,73 @@ export const moLetterColumns = (
     accessorKey: "user.nama",
     header: "Name",
     enableGlobalFilter: true,
-    cell: ({ row }) => {
-      return row.original.user.nama;
-    },
+    cell: ({ row }) => row.original.user.nama,
   },
   {
     accessorKey: "jenisSurat",
     header: "Letter Type",
-    enableColumnFilter: true, // Enable untuk column filter
-    filterFn: "multiSelect", // Gunakan custom filter function
-    cell: ({ row }) => {
-      return row.original.jenisSurat;
-    },
+    enableColumnFilter: true,
+    filterFn: multiSelectFilterFn, // ✅ sudah diganti
+    cell: ({ row }) => row.original.jenisSurat,
   },
   {
     accessorKey: "status",
     header: "Status",
     enableColumnFilter: true,
-    filterFn: "multiSelect",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="px-1.5 flex items-center gap-1">
-          {row.original.status === "Approved" ? (
-            <>
-              <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-              Approved
-            </>
-          ) : row.original.status === "Rejected" ? (
-            <>
-              <IconCircleXFilled className="fill-red-500 dark:fill-red-400" />
-              Rejected
-            </>
-          ) : row.original.status === "Finished" ? (
-            <>
-              <IconFlagFilled className="fill-blue-500 dark:fill-blue-400" />
-              Finished
-            </>
-          ) : row.original.status === "Pending" ? (
-            <>
-              <IconClockFilled className="fill-yellow-500 dark:fill-yellow-400" />
-              Pending
-            </>
-          ) : (
-            row.original.status
-          )}
-        </Badge>
-      );
-    },
+    filterFn: multiSelectFilterFn, // ✅ sudah diganti
+    cell: ({ row }) => (
+      <Badge variant="outline" className="px-1.5 flex items-center gap-1">
+        {row.original.status === "Approved" ? (
+          <>
+            <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+            Approved
+          </>
+        ) : row.original.status === "Rejected" ? (
+          <>
+            <IconCircleXFilled className="fill-red-500 dark:fill-red-400" />
+            Rejected
+          </>
+        ) : row.original.status === "Finished" ? (
+          <>
+            <IconFlagFilled className="fill-blue-500 dark:fill-blue-400" />
+            Finished
+          </>
+        ) : row.original.status === "Pending" ? (
+          <>
+            <IconClockFilled className="fill-yellow-500 dark:fill-yellow-400" />
+            Pending
+          </>
+        ) : (
+          row.original.status
+        )}
+      </Badge>
+    ),
   },
-
   {
     accessorKey: "tanggalPengajuan",
     header: "Submission Date",
     enableColumnFilter: true,
-    filterFn: "dateRange", // Gunakan date range filter
-    cell: ({ row }) => {
-      return row.original.tanggalPengajuan
+    filterFn: dateRangeFilterFn, // ✅ sudah diganti
+    cell: ({ row }) =>
+      row.original.tanggalPengajuan
         ? format(new Date(row.original.tanggalPengajuan), "MMM dd, yyyy")
-        : "-";
-    },
+        : "-",
   },
   {
     accessorKey: "tanggalPersetujuan",
     header: "Approval Date",
-    cell: ({ row }) => {
-      return row.original.tanggalPersetujuan
+    cell: ({ row }) =>
+      row.original.tanggalPersetujuan
         ? format(new Date(row.original.tanggalPersetujuan), "MMM dd, yyyy")
-        : "-";
-    },
+        : "-",
   },
   {
     accessorKey: "tanggalUpload",
     header: "Upload Date",
-    cell: ({ row }) => {
-      return row.original.tanggalUpload
+    cell: ({ row }) =>
+      row.original.tanggalUpload
         ? format(new Date(row.original.tanggalUpload), "MM dd, yyyy")
-        : "-";
-    },
+        : "-",
   },
   {
     header: "Actions",
@@ -520,29 +521,34 @@ export const moLetterColumns = (
     cell: ({ row }) => (
       <div className="flex justify-start items-center gap-2">
         <LetterDetailDrawer letter={row.original} />
-       {(row.original.status === "Approved" || row.original.status === "Finished") && (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Button
-        onClick={() => handleOpenDialogUploadLetter(row.original.id)}
-        size="sm"
-        variant="outline"
-        className="h-8 w-8 p-0"
-      >
-        <Upload className="h-4 w-4" />
-      </Button>
-    </TooltipTrigger>
-    <TooltipContent>
-      <p>Upload</p>
-    </TooltipContent>
-  </Tooltip>
-)}
+        {(row.original.status === "Approved" || row.original.status === "Finished") && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => handleOpenDialogUploadLetter(row.original.id)}
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Upload</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         {row.original.fileSurat && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={() => handleDownload(row.original.fileSurat!)} size="sm" variant="outline" className="h-8 w-8 p-0">
-                <Download className="h-4 w-4"></Download>
+              <Button
+                onClick={() => handleDownload(row.original.fileSurat!)}
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+              >
+                <Download className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -554,3 +560,4 @@ export const moLetterColumns = (
     ),
   },
 ];
+
