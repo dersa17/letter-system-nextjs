@@ -38,7 +38,7 @@ export const authOptions: NextAuthConfig = {
         return {
           id: user.id,
           email: user.email,
-          idMajor: user.idMajor ?? undefined,
+          idMajor: user.idMajor || undefined,
           role: user.role,
         };
       },
@@ -53,6 +53,7 @@ export const authOptions: NextAuthConfig = {
         token.majorId = user.idMajor;
         token.userId = user.id;
         token.role = user.role;
+        token.email = user.email;
       }
       return token;
     },
