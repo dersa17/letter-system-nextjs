@@ -10,9 +10,14 @@ import { auth } from "@/lib/auth";
 export async function GET() {
   try {
     const session = await auth()
+        if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const id = session.user.id;
     const user = await prisma.user.findUnique({
       where: {
-        id: session.user.id,
+        id
       },
       include: {
         role: true,
