@@ -35,6 +35,9 @@ export async function middleware(request: NextRequest) {
 
   // Ambil token next-auth dari cookie
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  console.log("MIDDLEWARE pathname:", pathname);
+  console.log("MIDDLEWARE token:", token);
+
 
   // Kalau belum login, redirect ke login page
   if (!token?.sub) {
@@ -77,7 +80,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/login",
     "/admin/:path*",
     "/mo/:path*",
     "/kaprodi/:path*",
