@@ -196,7 +196,7 @@ const LetterDetailContent = ({ letter }: LetterDetailContentProps) => {
 
       case "Tugas Mata Kuliah":
         return (
-          letter.suratTugasMk && (
+          letter.suratTugasMk  &&  (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -233,7 +233,10 @@ const LetterDetailContent = ({ letter }: LetterDetailContentProps) => {
                       Subject
                     </p>
                     <p className="text-base">
-                      {letter.suratTugasMk.course.nama}
+                      {
+                        // Type assertion agar TypeScript tidak error
+                        (letter.suratTugasMk as { course?: { nama?: string } })?.course?.nama ?? "N/A"
+                      }
                     </p>
                   </div>
                 </div>

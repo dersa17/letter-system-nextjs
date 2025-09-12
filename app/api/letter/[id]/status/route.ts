@@ -44,16 +44,6 @@ export async function PATCH(
       await prisma.notification.create({
         data: {
           idPengajuan: updated.id,
-          userId: mo.id, // ✅ sekarang aman
-          type: "Pengajuan Surat Siap Upload",
-          message: `Pengajuan surat "${updated?.jenisSurat}" (ID: ${updated?.id}) telah diapprove oleh ${updated?.kaprodi?.nama}.`,
-          isRead: false,
-        },
-      });
-
-      await prisma.notification.create({
-        data: {
-          idPengajuan: updated.id,
           userId: mo.id,
           type: "Pengajuan Surat Siap Upload",
           message: `Pengajuan surat "${updated?.jenisSurat}" (ID: ${updated?.id}) telah diapprove oleh ${updated?.kaprodi?.nama}.`,

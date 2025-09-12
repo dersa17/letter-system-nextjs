@@ -15,10 +15,10 @@ type LetterInput =
 type LetterStore = {
     letters: Prisma.PengajuanSuratGetPayload<{
   include: {
-    laporanHasilStudi?: true;
-    suratTugasMk?: { include: { course: true } };
-    suratKeteranganLulus?: true;
-    suratMahasiswaAktif?: true;
+    laporanHasilStudi: true;
+    suratTugasMk: { include: { course: true } };
+    suratKeteranganLulus: true;
+    suratMahasiswaAktif: true;
     user: true,
     mo: true,
     kaprodi: true

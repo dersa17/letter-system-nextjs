@@ -13,10 +13,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import useProfileStore from "@/app/stores/profile-store";
 import { profileUpdateSchema } from "@/lib/schema.zod";
 import { z } from "zod";
+import Image from "next/image";
 
 const ProfileForm = () => {
   const { profile, fetchProfile, updateProfile, isLoading } = useProfileStore();
@@ -36,7 +37,7 @@ const ProfileForm = () => {
       password: "",
       confirmPassword: "",
       alamat: profile?.alamat || "",
-      image: profile?.image || undefined,
+      image: undefined, // ✅ hanya undefined
     },
   });
 
@@ -96,10 +97,13 @@ const ProfileForm = () => {
                   <div className="relative w-32 h-32 cursor-pointer group">
                     <div className="w-full h-full rounded-full overflow-hidden border-4 border-primary/20 group-hover:border-primary/40 transition-all duration-300 shadow-lg">
                       {imagePreview ? (
-                        <img
+                        <Image
                           src={imagePreview}
                           alt="Foto Profil"
                           className="w-full h-full object-cover"
+                          width={128}
+                          height={128}
+                          style={{ objectFit: "cover" }}
                         />
                       ) : (
                         <div className="flex items-center justify-center w-full h-full bg-muted text-muted-foreground">
@@ -124,11 +128,7 @@ const ProfileForm = () => {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      {...form.register("image")}
-                      ref={(e) => {
-                        form.register("image").ref(e);
-                        fileInputRef.current = e;
-                      }}
+                      ref={fileInputRef}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
