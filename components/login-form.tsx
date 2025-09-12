@@ -1,7 +1,7 @@
 "use client";
 
-import { useState} from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -10,33 +10,53 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
+  const { data, status } = useSession();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const roleRedirectMap: Record<number, string> = {
+    1: "/admin/dashboard",
+    2: "/mo/dashboard",
+    3: "/kaprodi/dashboard",
+    4: "/mahasiswa/home",
+  };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  setIsLoading(true);
+  // ⏩ Redirect jika sudah login
+  useEffect(() => {
+    if (status === "authenticated") {
+      const userRole = data?.user?.role.id;
+      const redirectPath = userRole ? roleRedirectMap[userRole] : "/";
+      router.replace(redirectPath);
+    }
+  }, [status, data, router]);
 
-  const res = await signIn("credentials", {
-    redirect: false,
-    id,
-    password,
-    callbackUrl: "/",
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-  setIsLoading(false);
+    const res = await signIn("credentials", {
+      redirect: false,
+      id,
+      password,
+    });
 
-  if (res?.error) {
-    setError("ID atau password salah.");
-  } else if (res?.url) {
-    router.replace(res.url);
+    setIsLoading(false);
+
+    if (res?.error) {
+      setError("ID atau password salah.");
+    } else if (res?.url) {
+      router.replace(res.url);
+    }
+  };
+
+  // ⏳ Optional: Loading state saat cek session
+  if (status === "loading") {
+    return <div>Loading...</div>;
   }
-};
 
   return (
     <form
