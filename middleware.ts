@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
 
 
 const roleRedirectMap: Record<number, string> = {
@@ -71,14 +72,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET }) as {
+  sub: string;
+  role?: Prisma.RoleUserGetPayload<true>;
+  [key: string]: string | number | boolean | object | undefined;
+};
+
 
   if (!token?.sub) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const method = request.method;
-  const role = token.role?.id;
+  const role = token.role?.id as number;
 
   if (pathname === "/") {
     const redirectPath = roleRedirectMap[role];

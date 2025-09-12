@@ -9,7 +9,12 @@ export async function GET() {
   try {
     const session = await auth();
   
-    const { id, role, idMajor } = session?.user;
+    const { id, role, idMajor } = session!.user as {
+    id: string;
+    role: { id: number };
+    idMajor?: string;
+  };
+
 
     let whereCondition = {};
 
@@ -114,6 +119,13 @@ export async function POST(req: NextRequest) {
       });
 
       const kaprodi =  await tx.user.findFirst({where:{idRole: 3, status: "Aktif", idMajor: session?.user?.idMajor}})
+
+      if (!kaprodi) {
+        return NextResponse.json(
+          { error: "Kaprodi not found" },
+          { status: 404 }
+        );
+      }
 
       await  tx.notification.create({data: {
         idPengajuan: pengajuanSurat.id,

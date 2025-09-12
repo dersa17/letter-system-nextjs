@@ -8,7 +8,7 @@ declare module "next-auth" {
       id: string;
       idMajor?: string;
       email: string;
-      role?: string;
+      role?: Prisma.RoleUserGetPayload;
     };
   }
 
@@ -21,6 +21,6 @@ declare module "next-auth" {
     majorId?: string;
     userId?: string;
     email?: string;
-    role?: string;
+    role?: Prisma.RoleUserGetPayload;
   }
 }
