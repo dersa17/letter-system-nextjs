@@ -4,8 +4,6 @@ import {
   Users,
   BookOpen,
   GraduationCap,
-  TrendingUp,
-  AlertTriangle,
   Download,
 } from "lucide-react";
 import {
@@ -33,140 +31,7 @@ import { IconCircleCheckFilled, IconCircleXFilled, IconClockFilled, IconFlagFill
 import { format } from "date-fns";
 // import { Progress } from "@/components/ui/progress";
 
-// Mock data
-const recentUsers = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    email: "alice@university.edu",
-    role: "Student",
-    status: "Active",
-    joinDate: "2024-01-15",
-  },
-  {
-    id: 2,
-    name: "Dr. Smith",
-    email: "smith@university.edu",
-    role: "Professor",
-    status: "Active",
-    joinDate: "2023-09-01",
-  },
-  {
-    id: 3,
-    name: "Bob Wilson",
-    email: "bob@university.edu",
-    role: "Student",
-    status: "Pending",
-    joinDate: "2024-01-20",
-  },
-  {
-    id: 4,
-    name: "Carol Davis",
-    email: "carol@university.edu",
-    role: "TA",
-    status: "Active",
-    joinDate: "2024-01-10",
-  },
-  {
-    id: 5,
-    name: "Mike Brown",
-    email: "mike@university.edu",
-    role: "Student",
-    status: "Inactive",
-    joinDate: "2023-12-15",
-  },
-];
 
-const activeCourses = [
-  {
-    id: 1,
-    name: "Introduction to Computer Science",
-    code: "CS-101",
-    instructor: "Dr. Smith",
-    students: 45,
-    capacity: 50,
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Advanced Mathematics",
-    code: "MATH-301",
-    instructor: "Prof. Johnson",
-    students: 32,
-    capacity: 35,
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Physics I",
-    code: "PHYS-101",
-    instructor: "Dr. Brown",
-    students: 28,
-    capacity: 40,
-    status: "Active",
-  },
-  {
-    id: 4,
-    name: "Chemistry Lab",
-    code: "CHEM-201",
-    instructor: "Prof. Davis",
-    students: 20,
-    capacity: 25,
-    status: "Full",
-  },
-  {
-    id: 5,
-    name: "Literature Survey",
-    code: "ENG-200",
-    instructor: "Dr. Wilson",
-    students: 38,
-    capacity: 45,
-    status: "Active",
-  },
-];
-
-const majors = [
-  {
-    id: 1,
-    name: "Computer Science",
-    department: "Engineering",
-    students: 342,
-    courses: 24,
-    avgGpa: 3.45,
-  },
-  {
-    id: 2,
-    name: "Business Administration",
-    department: "Business",
-    students: 298,
-    courses: 18,
-    avgGpa: 3.52,
-  },
-  {
-    id: 3,
-    name: "Psychology",
-    department: "Liberal Arts",
-    students: 234,
-    courses: 16,
-    avgGpa: 3.38,
-  },
-  {
-    id: 4,
-    name: "Biology",
-    department: "Sciences",
-    students: 187,
-    courses: 22,
-    avgGpa: 3.41,
-  },
-  {
-    id: 5,
-    name: "Engineering",
-    department: "Engineering",
-    students: 156,
-    courses: 28,
-    avgGpa: 3.33,
-  },
-];
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "Approved":
@@ -239,7 +104,7 @@ export function AdminDashboardContent() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Recent Users
-                <Badge variant="secondary">{recentUsers.length} users</Badge>
+                <Badge variant="secondary">5 users</Badge>
               </CardTitle>
               <CardDescription>
                 Manage user accounts, roles, and permissions
@@ -293,7 +158,7 @@ export function AdminDashboardContent() {
               <CardTitle className="flex items-center justify-between">
                 Recent Courses
                 <Badge variant="secondary">
-                  {dataDashboardAdmin?.recentCourse.length} courses
+                 5 courses
                 </Badge>
               </CardTitle>
               <CardDescription>
@@ -342,7 +207,7 @@ export function AdminDashboardContent() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Recent Majors
-                <Badge variant="secondary">{dataDashboardAdmin?.recentMajor.length} programs</Badge>
+                <Badge variant="secondary">5 programs</Badge>
               </CardTitle>
               <CardDescription>
               </CardDescription>
@@ -393,7 +258,7 @@ export function MoDashboardContent() {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Recent Letters Uploaded
-            <Badge variant="secondary">{recentUsers.length} letters</Badge>
+            <Badge variant="secondary">5 letters</Badge>
           </CardTitle>
           <CardDescription>Manage upload letter</CardDescription>
         </CardHeader>
@@ -453,7 +318,7 @@ export function KaprodiDashboardContent() {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Recent Letters Approval
-            <Badge variant="secondary">{dataDashboardKaprodi?.recentLettersApproval.length} letters</Badge>
+            <Badge variant="secondary">5 letters</Badge>
           </CardTitle>
           <CardDescription>Manage Approval letter</CardDescription>
         </CardHeader>

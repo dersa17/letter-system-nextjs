@@ -1,10 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Button } from "@/components/ui/button"
 import { getSession } from "next-auth/react"
 import {
-  Icon, IconMail, IconProps, IconUser, IconBook, IconSchool,
+  Icon, IconProps, IconUser, IconBook, IconSchool,
   IconDashboard,
   IconFile,
 } from "@tabler/icons-react"
@@ -21,14 +20,6 @@ import {
 } from "@/components/ui/sidebar"
 import useProfileStore from "@/app/stores/profile-store"
 import { NotificationDropdown } from "./notification-dropdown"
-
-const data = {
-  user: {
-    name: "",
-    email: "",
-    avatar: "",
-  },
-}
 
 const menuAdmin = [
   {title: "Dashboard", url: "/admin/dashboard", icon: IconDashboard },

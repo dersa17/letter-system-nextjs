@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,6 +7,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await auth()
     const { id } = await params;
 
     await prisma.notification.update({
@@ -14,7 +16,7 @@ export async function PATCH(
     });
 
     const unreadNotifications = await prisma.notification.findMany({
-      where: { isRead: false },
+      where: { isRead: false, userId: session?.user?.id  },
       orderBy: { createdAt: 'desc' }
     });
 

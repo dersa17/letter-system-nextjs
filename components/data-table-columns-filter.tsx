@@ -10,7 +10,6 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import {
   DropdownMenu,
@@ -26,13 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 
 // Select Filter Component
 interface DataTableColumnFilterProps<TData> {
@@ -275,11 +268,17 @@ export function DataTableFilter<TData>({
   }
 }
 
+// Tipe minimal buat row yang punya method getValue
+interface TableRow {
+  getValue: (columnId: string) => unknown;
+}
+
 // Custom filter functions
-export const dateRangeFilterFn = (row: any, columnId: string, value: DateRange) => {
-  const date = new Date(row.getValue(columnId));
+export const dateRangeFilterFn = (row: TableRow, columnId: string, value: DateRange) => {
+  const cellValue = row.getValue(columnId);
+  const date = new Date(cellValue as string | number); // asumsi bisa parse ke Date
   const { from, to } = value;
-  
+
   if (!from) return true;
   if (from && !to) {
     return date >= from;
@@ -287,13 +286,12 @@ export const dateRangeFilterFn = (row: any, columnId: string, value: DateRange) 
   if (from && to) {
     return date >= from && date <= to;
   }
-  
+
   return true;
 };
 
-// Multi-select filter function
-export const multiSelectFilterFn = (row: any, columnId: string, value: string[]) => {
+export const multiSelectFilterFn = (row: TableRow, columnId: string, value: string[]) => {
   if (!value || value.length === 0) return true;
   const cellValue = row.getValue(columnId);
-  return value.includes(cellValue);
+  return value.includes(cellValue as string);
 };

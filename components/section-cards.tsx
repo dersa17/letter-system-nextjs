@@ -1,5 +1,4 @@
 import { IconBook, IconSchool, IconUser, IconFileCheck, IconFileTime, IconFileX, IconFile, IconFileUpload, IconFileDownload } from "@tabler/icons-react"
-import { getUserCount, getJurusanCount, getMataKuliahCount } from "@/lib/data"
 import {
   Card,
   CardDescription,
