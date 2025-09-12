@@ -27,8 +27,7 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  console.log("MIDDLEWARE pathname:", pathname);
-  // console.log('Cookies:', request.cookies.getAll());
+
 
 
   // Bypass middleware untuk halaman login dan auth API
@@ -37,9 +36,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // Ambil token next-auth dari cookie
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
-  console.log("MIDDLEWARE token:", token);
-  console.log("MIDDLEWARE AUTH_SECRET:", process.env.AUTH_SECRET);
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+ ;
+
+  console.log("TOKEN:", token);
+  console.log("SECRET:", process.env.NEXTAUTH_SECRET);
+  console.log("Cookies:", request.cookies.getAll());
 
 
   // Kalau belum login, redirect ke login page
