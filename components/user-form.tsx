@@ -215,15 +215,15 @@ const UserForm = ({
               <FormLabel>Role</FormLabel>
               <FormControl>
                 <Select
-                  onValueChange={(val) => field.onChange(Number(val))}
-                  value={field.value}
+                  onValueChange={field.onChange}
+                  value={field.value ? String(field.value) : ""}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Role " />
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
+                      <SelectItem key={role.id} value={String(role.id)}>
                         {role.nama}
                       </SelectItem>
                     ))}
