@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
-import { signIn, getSession } from "next-auth/react";
+
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -14,43 +15,31 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const {  status } = useSession();
   const router = useRouter();
+
+  // Redirect otomatis setelah login sukses
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/"); // middleware akan redirect ke dashboard sesuai role
+    }
+  }, [status, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        id,
-        password,
-      });
+    const res = await signIn("credentials", {
+      redirect: false, // jangan biarkan next-auth redirect otomatis
+      id,
+      password,
+    });
 
-      if (res?.error) {
-        setError(res.error);
-        return;
-      }
+    setIsLoading(false);
 
-      const session = await getSession();
-      const roleRedirects: Record<number, string> = {
-        1: "/admin/dashboard",
-        2: "/mo/dashboard",
-        3: "/kaprodi/dashboard",
-        4: "/mahasiswa/home",
-      };
-
-      const redirectPath = session?.user?.role.id
-        ? roleRedirects[session.user.role.id] || "/login"
-        : "/login";
-
-      router.push(redirectPath);
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+    if (res?.error) {
+      setError("ID atau password salah.");
     }
   };
 
