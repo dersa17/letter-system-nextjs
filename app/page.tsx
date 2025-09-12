@@ -1,7 +1,8 @@
 "use client";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const roleRedirectMap: Record<number, string> = {
   1: "/admin/dashboard",
@@ -10,22 +11,20 @@ const roleRedirectMap: Record<number, string> = {
   4: "/mahasiswa/home",
 };
 
-
 export default function Home() {
-
-  const { data: session, status } = useSession();
   const router = useRouter();
-  
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (status === "loading") return;
+
+    if (!session) {
       router.replace("/login");
-    } else if (status === "authenticated") {
-      const roleId = session?.user?.role?.id;
-      const redirectPath = roleRedirectMap[roleId] || "/login";
-      router.replace(redirectPath);
+    } else {
+      const roleId = session.user?.role?.id;
+      router.replace(roleRedirectMap[roleId] || "/login");
     }
   }, [status, session, router]);
 
-  return null
+  return null; // ⛔ Jangan tampilkan halaman /
 }
