@@ -1,6 +1,6 @@
 # Letter System Next.js
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A letter submission system for academic purposes for students. There are four user roles: students who submit letters, the head of the study program (KAPRODI) who approves or rejects letters, the operational manager (MO) who uploads letters, and the admin who manages user data, classes, and study programs.
 
 ## Getting Started
 
