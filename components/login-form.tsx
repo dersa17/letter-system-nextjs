@@ -17,19 +17,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const roleRedirectMap: Record<number, string> = {
-    1: "/admin/dashboard",
-    2: "/mo/dashboard",
-    3: "/kaprodi/dashboard",
-    4: "/mahasiswa/home",
-  };
-
   // ⏩ Redirect jika sudah login
   useEffect(() => {
     if (status === "authenticated") {
-      const userRole = data?.user?.role.id;
-      const redirectPath = userRole ? roleRedirectMap[userRole] : "/";
-      router.replace(redirectPath);
+      router.replace("/");
     }
   }, [status, data, router]);
 

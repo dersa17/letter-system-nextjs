@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
   const role = token.role?.id;
 
   // Jika mengakses root '/', redirect ke dashboard sesuai role
-  if (pathname === "/" || pathname.startsWith("/login")) {
+  if (pathname === "/") {
     const redirectPath = roleRedirectMap[role];
     if (redirectPath) {
       return NextResponse.redirect(new URL(redirectPath, request.url));
