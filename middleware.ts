@@ -29,16 +29,18 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Bypass middleware untuk halaman login dan auth API
-  if (pathname.startsWith("/api/auth")) {
+  if (pathname.startsWith("/api/auth") || pathname.startsWith("/api/debug")) {
     return NextResponse.next();
   }
 
   // Ambil token next-auth dari cookie
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, secureCookie: process.env.NODE_ENV === "production" });
 
   console.log("TOKEN:", token);
   console.log("SECRET:", process.env.NEXTAUTH_SECRET);
   console.log("Cookies:", request.cookies.getAll());
+  console.log("Node Env:", process.env.NODE_ENV);
+  console.log("URL:", process.env.NEXTAUTH_URL);
 
   // Kalau belum login, redirect ke login page
   if (!token?.sub) {
