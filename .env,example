@@ -21,3 +21,8 @@ POSTGRES_PRISMA_URL="postgres://USER:PASSWORD@HOST:PORT/DATABASE?connect_timeout
 
 # Blob token example
 BLOB_READ_WRITE_TOKEN="your_blob_rw_token_here"
+
+# NextAuth.js
+NEXTAUTH_SECRET="your_nextauth_secret_here"
+NEXTAUTH_URL="http://localhost:3000"
+NODE_ENV=development

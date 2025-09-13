@@ -1,8 +1,49 @@
+# Letter System Next.js
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+### 1. Setup environment variables
+
+Copy the `.env.example` file into `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+Then fill in the values according to your database, auth, and service configuration. Example:
+```
+# DATABASE
+DATABASE_URL="postgres://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+DATABASE_URL_UNPOOLED="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+
+# Connection parameters
+PGHOST="HOST"
+PGHOST_UNPOOLED="HOST_UNPOOLED"
+PGUSER="USER"
+PGDATABASE="DATABASE"
+PGPASSWORD="PASSWORD"
+
+# Vercel/Postgres
+POSTGRES_URL="postgres://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+POSTGRES_URL_NON_POOLING="postgres://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+POSTGRES_USER="USER"
+POSTGRES_HOST="HOST"
+POSTGRES_PASSWORD="PASSWORD"
+POSTGRES_DATABASE="DATABASE"
+POSTGRES_URL_NO_SSL="postgres://USER:PASSWORD@HOST:PORT/DATABASE"
+POSTGRES_PRISMA_URL="postgres://USER:PASSWORD@HOST:PORT/DATABASE?connect_timeout=15&sslmode=require"
+
+# Blob token example
+BLOB_READ_WRITE_TOKEN="your_blob_rw_token_here"
+
+# NextAuth.js
+NEXTAUTH_SECRET="your_nextauth_secret_here"
+NEXTAUTH_URL="http://localhost:3000"
+NODE_ENV=development
+```
+
+### 2. run the development server
 
 ```bash
 npm run dev
@@ -16,21 +57,15 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Live Demo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Project is deployed on Vercel:  
+👉 [https://your-project-name.vercel.app](https://your-project-name.vercel.app)
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![Next.js](https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white)
+![Auth.js](https://img.shields.io/badge/Auth.js-000?logo=auth0&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?logo=storybook&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
