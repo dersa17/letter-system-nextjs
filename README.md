@@ -72,11 +72,3 @@ For testing purposes, you can use the following accounts:
 | MO      | 2             | mo       |
 | Kaprodi | 3             | kaprodi  |
 
-
-## Tech Stack
-
-![Next.js](https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white)
-![Auth.js](https://img.shields.io/badge/Auth.js-000?logo=auth0&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white)
-![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?logo=storybook&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
