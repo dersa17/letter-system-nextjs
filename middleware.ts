@@ -28,29 +28,42 @@ const pathMethodAccess: Record<string, Record<string, number[]>> = {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Bypass middleware untuk halaman login dan auth API
-  if (pathname.startsWith("/api/auth") || pathname.startsWith("/api/debug")) {
+  // Bypass middleware untuk auth API
+  if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
-  // Ambil token next-auth dari cookie
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, secureCookie: process.env.NODE_ENV === "production" });
+  // Ambil token dari cookie
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
 
-  console.log("TOKEN:", token);
-  console.log("SECRET:", process.env.NEXTAUTH_SECRET);
-  console.log("Cookies:", request.cookies.getAll());
-  console.log("Node Env:", process.env.NODE_ENV);
-  console.log("URL:", process.env.NEXTAUTH_URL);
+  const role = token?.role?.id;
+  const method = request.method;
 
-  // Kalau belum login, redirect ke login page
+  // ===== CASE: User belum login =====
   if (!token?.sub) {
+    // biarkan akses ke /login
+    if (pathname.startsWith("/login")) {
+      return NextResponse.next();
+    }
+    // kalau buka selain login → paksa ke /login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const method = request.method;
-  const role = token.role?.id;
+  // ===== CASE: User sudah login =====
 
-  // Jika mengakses root '/', redirect ke dashboard sesuai role
+  // Jika akses /login → redirect ke dashboard sesuai role
+  if (pathname.startsWith("/login")) {
+    const redirectPath = roleRedirectMap[role];
+    if (redirectPath) {
+      return NextResponse.redirect(new URL(redirectPath, request.url));
+    }
+  }
+
+  // Jika akses root "/" → redirect ke dashboard sesuai role
   if (pathname === "/") {
     const redirectPath = roleRedirectMap[role];
     if (redirectPath) {
@@ -58,24 +71,26 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Cek akses role berdasarkan path dan method
+  // Cek akses role berdasarkan path & method
   if (pathname.startsWith("/api")) {
-    // API: cek role + method
-    const allowedRoles = Object.entries(pathMethodAccess)
-      .find(([path]) => pathname.startsWith(path))?.[1][method] || [];
+    const allowedRoles =
+      Object.entries(pathMethodAccess).find(([path]) =>
+        pathname.startsWith(path)
+      )?.[1][method] || [];
     if (!allowedRoles.includes(role)) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   } else {
-    // Halaman: cek role untuk GET saja
-    const allowedRoles = Object.entries(pathMethodAccess)
-      .find(([path]) => pathname.startsWith(path))?.[1].GET || [];
+    const allowedRoles =
+      Object.entries(pathMethodAccess).find(([path]) =>
+        pathname.startsWith(path)
+      )?.[1].GET || [];
     if (!allowedRoles.includes(role)) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
 
-  // Lanjutkan request normal
+  // lanjut request normal
   return NextResponse.next();
 }
 
@@ -83,10 +98,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/admin/:path",
-    "/mo/:path",
-    "/kaprodi/:path",
-    "/mahasiswa/:path",
+    "/login",
+    "/admin/:path*",
+    "/mo/:path*",
+    "/kaprodi/:path*",
+    "/mahasiswa/:path*",
     "/api/:path*",
     "/profile",
   ],
