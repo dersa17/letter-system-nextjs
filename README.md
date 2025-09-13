@@ -60,7 +60,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Live Demo
 
 Project is deployed on Vercel:  
-👉 [https://your-project-name.vercel.app](https://your-project-name.vercel.app)
+👉 [https://letter-system-nextjs.vercel.app](https://letter-system-nextjs.vercel.app)
+
+## Test Accounts
+
+For testing purposes, you can use the following accounts:
+| Role    | ID / Username | Password |
+| ------- | ------------- | -------- |
+| Student | 2372049       | 2372049  |
+| Admin   | 1             | admin    |
+| MO      | 2             | mo       |
+| Kaprodi | 3             | kaprodi  |
+
 
 ## Tech Stack
 
